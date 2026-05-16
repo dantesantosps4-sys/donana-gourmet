@@ -1,789 +1,1478 @@
-import { useState, useEffect, useRef } from "react";
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Donana Gourmet - Experiência gastronômica premium em Fortaleza. Massas, risotos, carnes e muito mais. Delivery e retirada.">
+<meta name="keywords" content="restaurante fortaleza, delivery fortaleza, donana gourmet, massas, risotos, carne de sol">
+<meta name="author" content="Donana Gourmet">
+<title>Donana Gourmet | Fortaleza - CE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --wine:     #5a0e22;
+  --wine-dark:#2e0710;
+  --gold:     #c4a050;
+  --gold-lt:  #e8d5a3;
+  --gold-dk:  #8b6914;
+  --cream:    #f5efe8;
+  --muted:    #c9b08a;
+  --dim:      #9a7840;
+  --bg:       #080508;
+  --bg2:      #100910;
+  --card:     rgba(32,14,22,0.92);
+  --border:   rgba(196,160,80,0.18);
+  --glass:    rgba(255,255,255,0.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--cream);
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--gold-dk);border-radius:3px;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:'DM Sans',sans-serif;}
+input,textarea,select{font-family:'DM Sans',sans-serif;}
+img{display:block;}
 
-const WHATSAPP_NUMBER = "5585985302803";
-const WHATSAPP_MSG = encodeURIComponent("Olá, vim através do site da Donana Gourmet e gostaria de fazer um pedido.");
+/* ─── LOADING ─────────────────────────────── */
+#loading{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#loading.hide{opacity:0;visibility:hidden;}
+.load-logo{
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--wine));
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;margin-bottom:28px;
+  animation:loadSpin 2s ease-in-out infinite;
+}
+.load-title{
+  font-family:'Playfair Display',serif;
+  font-size:34px;color:var(--gold);font-weight:900;
+  letter-spacing:.06em;margin-bottom:6px;
+}
+.load-sub{font-size:11px;color:var(--dim);letter-spacing:.35em;text-transform:uppercase;margin-bottom:36px;}
+.load-bar-wrap{width:220px;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
+.load-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--wine));border-radius:2px;animation:loadProg 1.6s ease-in-out infinite;}
+@keyframes loadSpin{0%,100%{transform:rotate(0deg) scale(1);}50%{transform:rotate(180deg) scale(1.1);}}
+@keyframes loadProg{0%{width:0;transform:translateX(0);}100%{width:100%;}}
 
-const MENU = {
-  "Especiais da Casa": [
-    { id: 1, name: "Filé salteado na manteiga com fritas", price: 47.90, desc: "Filé mignon suculento, salteado na manteiga com ervas finas, acompanhado de fritas crocantes.", img: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80" },
-    { id: 2, name: "Tábua Sertaneja", price: 49.90, desc: "Tábua farta com carne de sol, queijo coalho, macaxeira, charque e vinagrete.", img: "https://images.unsplash.com/photo-1544025162-d76594f0c7e1?w=400&q=80" },
-    { id: 3, name: "Maminha grelhada na manteiga com batatas sauté", price: 49.90, desc: "Maminha grelhada no ponto perfeito, na manteiga temperada, com batatas sauté douradas.", img: "https://images.unsplash.com/photo-1558030006-450675393462?w=400&q=80" },
-    { id: 4, name: "Carne de sol e queijo coalho na redução de rapadura", price: 69.90, desc: "Carne de sol premium com queijo coalho grelhado em irresistível redução de rapadura.", img: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&q=80" },
-    { id: 5, name: "Carne de sol aos 4 queijos", price: 73.90, desc: "Carne de sol desfiada envolta em cremoso molho de quatro queijos selecionados.", img: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80" },
-    { id: 6, name: "Arroz de Camarão Cremoso", price: 32.90, desc: "Arroz cremoso com camarões frescos, legumes e toque especial da casa.", img: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80" },
-    { id: 7, name: "Massa Frutos do Mar", price: 39.90, desc: "Massa artesanal com mix de frutos do mar em molho ao sugo com ervas frescas.", img: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80" },
-  ],
-  "Risotos": [
-    { id: 10, name: "Frango com Bacon", price: 23.90, desc: "Risoto cremoso de frango grelhado com bacon crocante e parmesão.", img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=80" },
-    { id: 11, name: "Carne de sol com calabresa", price: 24.90, desc: "Risoto nordestino com carne de sol e calabresa defumada.", img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=80" },
-    { id: 12, name: "Filé", price: 29.90, desc: "Risoto sofisticado com medalhões de filé mignon e parmesão aged.", img: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=80" },
-  ],
-  "Massas e Molhos": [
-    { id: 20, name: "Frango com queijo", price: 24.90, desc: "Massa artesanal com frango grelhado e queijo derretido.", img: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80" },
-    { id: 21, name: "Calabresa e bacon defumado", price: 24.90, desc: "Massa com calabresa ao molho e bacon defumado artesanal.", img: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80" },
-    { id: 22, name: "Carbonara", price: 25.90, desc: "Clássica italiana com ovos, parmesão, pancetta e pimenta negra.", img: "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&q=80" },
-    { id: 23, name: "Bolonhesa", price: 26.90, desc: "Ragù de carne moída ao molho de tomate fresco com ervas.", img: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80" },
-    { id: 24, name: "Nordestino", price: 27.90, desc: "Massa especial com carne de sol, queijo coalho e manteiga de garrafa.", img: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80" },
-    { id: 25, name: "Filé", price: 32.90, desc: "Massa premium com tiras de filé mignon ao molho especial da casa.", img: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80" },
-    { id: 26, name: "Camarão cremoso", price: 32.90, desc: "Massa ao molho cremoso com camarões frescos e especiarias.", img: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80" },
-    { id: 27, name: "Camarão com bacon", price: 34.90, desc: "Camarões grelhados com bacon crocante ao molho da casa.", img: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80" },
-  ],
-  "Pastéis": [
-    { id: 30, name: "Queijo", price: 9.90, desc: "Pastel crocante recheado com queijo derretido.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 31, name: "Misto", price: 9.90, desc: "Presunto e queijo no ponto certo.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 32, name: "Pizza", price: 10.90, desc: "Molho de tomate, queijo e pepperoni.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 33, name: "Frango", price: 9.90, desc: "Frango desfiado temperado.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 34, name: "Frango com bacon", price: 10.90, desc: "Frango e bacon crocante.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 35, name: "Frango com queijo", price: 10.90, desc: "Frango cremoso com queijo.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 36, name: "Carne com queijo", price: 11.90, desc: "Carne moída temperada com queijo.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 37, name: "Carne de sol com queijo", price: 13.90, desc: "Carne de sol premium com queijo coalho.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 38, name: "Tudão", price: 14.90, desc: "Tudo dentro: frango, carne, queijo e bacon!", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 39, name: "Chocolate", price: 16.90, desc: "Recheio de chocolate cremoso. Uma tentação!", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-  ],
-  "Omeletes": [
-    { id: 40, name: "Frango com queijo", price: 14.90, desc: "Omelete fofinho com frango e queijo derretido.", img: "https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80" },
-    { id: 41, name: "Frango com bacon", price: 14.90, desc: "Frango suculento e bacon crocante.", img: "https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80" },
-    { id: 42, name: "Calabresa com queijo", price: 14.90, desc: "Calabresa temperada com queijo fundido.", img: "https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80" },
-    { id: 43, name: "Presunto e queijo", price: 14.90, desc: "Clássico e irresistível.", img: "https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80" },
-    { id: 44, name: "Legumes", price: 15.90, desc: "Omelete nutritivo com legumes frescos.", img: "https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80" },
-  ],
-  "Petiscos": [
-    { id: 50, name: "Batata frita", price: 17.90, desc: "Batatas crocantes douradas na medida certa.", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80" },
-    { id: 51, name: "Batata frita com parmesão", price: 18.90, desc: "Batatas fritas com parmesão ralado e ervas.", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80" },
-    { id: 52, name: "Batata com cheddar e bacon", price: 18.90, desc: "Batatas cobertas com cheddar cremoso e bacon.", img: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80" },
-    { id: 53, name: "Isca de peixe", price: 18.90, desc: "Iscas de peixe empanadas, crocantes e saborosas.", img: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400&q=80" },
-    { id: 54, name: "Bolinha de queijo", price: 18.90, desc: "Bolinhas crocantes com queijo derretido por dentro.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 55, name: "Bolinha de carne do sol", price: 18.90, desc: "Carne de sol desfiada em bolinha crocante.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 56, name: "Macaxeira frita", price: 19.90, desc: "Macaxeira frita crocante por fora e macia por dentro.", img: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80" },
-    { id: 57, name: "Tulipas de frango crocantes", price: 19.90, desc: "Coxa de frango crocante temperada com ervas especiais.", img: "https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&q=80" },
-    { id: 58, name: "Camarão ao alho e óleo", price: 32.90, desc: "Camarões frescos salteados no alho e azeite.", img: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80" },
-    { id: 59, name: "Camarões empanados", price: 35.90, desc: "Camarões empanados crocantes com molho especial.", img: "https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80" },
-  ],
-  "Acompanhamentos": [
-    { id: 60, name: "Arroz branco", price: 8.90, desc: "Arroz soltinho e perfumado.", img: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80" },
-    { id: 61, name: "Arroz de leite", price: 11.90, desc: "Arroz cremoso com leite e temperos especiais.", img: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80" },
-    { id: 62, name: "Arroz biro biro", price: 12.90, desc: "Arroz com ovos, bacon e farofa crocante.", img: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80" },
-    { id: 63, name: "Arroz à grega", price: 12.90, desc: "Arroz colorido com legumes e temperos.", img: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80" },
-    { id: 64, name: "Baião de dois", price: 12.90, desc: "Clássico nordestino de arroz com feijão verde e queijo.", img: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80" },
-  ],
-  "Sucos": [
-    { id: 70, name: "Abacaxi", price: 6.00, desc: "Suco natural de abacaxi fresquinho.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 71, name: "Acerola", price: 6.00, desc: "Rico em vitamina C.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 72, name: "Manga", price: 6.00, desc: "Manga selecionada, docinha e cremosa.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 73, name: "Cajá", price: 6.00, desc: "O sabor autêntico do nordeste.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 74, name: "Goiaba", price: 6.00, desc: "Goiaba madura e saborosa.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 75, name: "Limão", price: 6.00, desc: "Refrescante e cítrico.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 76, name: "Tamarindo", price: 6.00, desc: "Sabor único e marcante.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 77, name: "Graviola", price: 6.00, desc: "Cremoso e tropical.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 78, name: "Abacaxi com morango", price: 7.00, desc: "Combinação tropical refrescante.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 79, name: "Acerola com morango", price: 7.00, desc: "Vitamina C em dobro.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 80, name: "Maracujá com manga", price: 7.00, desc: "Tropical e irresistível.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 81, name: "Abacaxi com hortelã", price: 7.00, desc: "Refrescante e digestivo.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-    { id: 82, name: "Detox", price: 12.00, desc: "Mix especial de frutas e verduras para energia e bem-estar.", img: "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80" },
-  ],
-  "Bebidas": [
-    { id: 90, name: "Água mineral", price: 2.50, desc: "500ml gelada.", img: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80" },
-    { id: 91, name: "Água com gás", price: 3.50, desc: "500ml gelada.", img: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80" },
-    { id: 92, name: "Refrigerante lata", price: 5.00, desc: "350ml gelado.", img: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80" },
-    { id: 93, name: "Coca-Cola 1L", price: 9.00, desc: "Garrafa 1 litro gelada.", img: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80" },
-    { id: 94, name: "Coca-Cola 2L", price: 13.00, desc: "Garrafa 2 litros gelada.", img: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80" },
-    { id: 95, name: "São Geraldo 1L", price: 9.00, desc: "Guaraná regional 1 litro.", img: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80" },
-    { id: 96, name: "São Geraldo 2L", price: 13.00, desc: "Guaraná regional 2 litros.", img: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80" },
-    { id: 97, name: "Red Bull", price: 12.90, desc: "Energy drink 250ml.", img: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80" },
-  ],
-};
+/* ─── NAVBAR ──────────────────────────────── */
+#navbar{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  height:68px;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .4s,backdrop-filter .4s,border-color .4s;
+  border-bottom:1px solid transparent;
+}
+#navbar.scrolled{
+  background:rgba(8,5,8,.94);
+  backdrop-filter:blur(22px);
+  border-color:var(--border);
+}
+.nav-brand{display:flex;align-items:center;gap:11px;cursor:pointer;}
+.nav-icon{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--wine));
+  display:flex;align-items:center;justify-content:center;
+  font-size:19px;flex-shrink:0;
+}
+.nav-name{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold);font-weight:700;letter-spacing:.04em;line-height:1.1;}
+.nav-tagline{font-size:10px;color:var(--dim);letter-spacing:.22em;text-transform:uppercase;}
+.nav-links{display:flex;align-items:center;gap:6px;}
+.nav-link{
+  background:none;border:none;
+  font-size:13px;color:var(--dim);
+  padding:7px 11px;border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s;font-weight:400;
+}
+.nav-link.active,.nav-link:hover{color:var(--gold);border-color:var(--gold);}
+.nav-cart{
+  position:relative;
+  background:linear-gradient(135deg,var(--gold),var(--wine));
+  border:none;border-radius:9px;padding:8px 16px;
+  color:#fff;font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:7px;
+  transition:transform .2s,box-shadow .2s;
+}
+.nav-cart:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(196,160,80,.35);}
+.cart-badge{
+  background:var(--wine);color:#fff;border-radius:50%;
+  width:19px;height:19px;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+/* hamburger mobile */
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--gold);border-radius:2px;transition:.3s;}
+@media(max-width:640px){
+  .nav-links{display:none;}.hamburger{display:flex;}
+  .nav-link{font-size:11px;}
+}
+/* mobile menu overlay */
+#mobile-menu{
+  display:none;position:fixed;inset:0;z-index:490;
+  background:rgba(8,5,8,.97);
+  flex-direction:column;align-items:center;justify-content:center;gap:20px;
+}
+#mobile-menu.open{display:flex;}
+.mobile-link{
+  font-family:'Playfair Display',serif;
+  font-size:28px;color:var(--muted);background:none;border:none;
+  transition:color .2s;font-weight:700;
+}
+.mobile-link:hover{color:var(--gold);}
 
-const CATEGORY_ICONS = {
-  "Especiais da Casa": "⭐",
-  "Risotos": "🍚",
-  "Massas e Molhos": "🍝",
-  "Pastéis": "🥟",
-  "Omeletes": "🍳",
-  "Petiscos": "🍟",
-  "Acompanhamentos": "🥗",
-  "Sucos": "🥤",
-  "Bebidas": "🥤",
-};
+/* ─── PAGES ───────────────────────────────── */
+.page{display:none;}
+.page.active{display:block;}
 
-const REVIEWS = [
-  { name: "Mariana Costa", stars: 5, text: "Melhor restaurante de Fortaleza! O filé na manteiga é simplesmente divino. Já virei cliente fiel!", avatar: "MC" },
-  { name: "Rafael Oliveira", stars: 5, text: "Experiência gastronômica incrível. O Arroz de Camarão é sensacional. Super recomendo!", avatar: "RO" },
-  { name: "Juliana Mendes", stars: 5, text: "A Carne de Sol aos 4 queijos é um espetáculo! Atendimento impecável e entrega rápida.", avatar: "JM" },
-  { name: "Carlos Souza", stars: 5, text: "Voltei mais 3 vezes essa semana. A qualidade é constante e o sabor é único. Nota 10!", avatar: "CS" },
-];
+/* ─── HERO ────────────────────────────────── */
+#hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85');
+  background-size:cover;background-position:center;
+  filter:brightness(.28);
+  transform:scale(1.05);
+  animation:heroZoom 20s ease-in-out infinite alternate;
+}
+@keyframes heroZoom{from{transform:scale(1.05);}to{transform:scale(1.12);}}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(8,5,8,.25) 0%,rgba(60,12,28,.3) 50%,rgba(8,5,8,.82) 100%);
+}
+.hero-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,160,80,.3),transparent);}
+.hero-line.top{top:14%;}
+.hero-line.bot{bottom:14%;}
+.hero-content{
+  position:relative;text-align:center;padding:0 24px;
+  opacity:0;transform:translateY(36px);
+  transition:opacity 1s ease,transform 1s ease;
+}
+.hero-content.visible{opacity:1;transform:translateY(0);}
+.hero-badge{
+  font-size:11px;letter-spacing:.4em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:22px;
+  display:inline-block;
+}
+.hero-h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(44px,10vw,96px);
+  font-weight:900;line-height:1.04;margin-bottom:24px;
+}
+.hero-h1 .line1,.hero-h1 .line3{color:var(--cream);}
+.hero-h1 .line2{
+  background:linear-gradient(135deg,var(--gold),var(--gold-lt),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(16px,3vw,21px);color:var(--muted);
+  max-width:500px;margin:0 auto 40px;line-height:1.75;font-style:italic;
+}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:50px;}
+.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-icon{font-size:22px;margin-bottom:4px;}
+.stat-val{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);font-weight:700;}
+.stat-label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.15em;}
+.scroll-hint{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  color:var(--gold);font-size:26px;
+  animation:bounce 2s ease-in-out infinite;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-12px);}}
 
-export default function App() {
-  const [page, setPage] = useState("home");
-  const [cart, setCart] = useState([]);
-  const [activeCategory, setActiveCategory] = useState("Especiais da Casa");
-  const [cartOpen, setCartOpen] = useState(false);
-  const [orderForm, setOrderForm] = useState({ name: "", phone: "", address: "", type: "entrega", payment: "pix", troco: "" });
-  const [checkoutStep, setCheckoutStep] = useState(0); // 0=cart, 1=form, 2=payment, 3=success
-  const [loading, setLoading] = useState(true);
-  const [scrolled, setScrolled] = useState(false);
-  const [heroVisible, setHeroVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+/* ─── BUTTONS ─────────────────────────────── */
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),#8b4513);
+  border:none;border-radius:12px;padding:14px 30px;
+  color:#fff;font-weight:700;font-size:15px;
+  display:inline-flex;align-items:center;gap:9px;
+  box-shadow:0 4px 20px rgba(196,160,80,.3);
+  transition:transform .2s,box-shadow .2s;
+}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(196,160,80,.45);}
+.btn-outline{
+  background:transparent;
+  border:2px solid rgba(196,160,80,.55);border-radius:12px;padding:12px 28px;
+  color:var(--gold);font-weight:700;font-size:15px;
+  display:inline-flex;align-items:center;gap:9px;
+  transition:background .2s,border-color .2s;
+}
+.btn-outline:hover{background:rgba(196,160,80,.1);border-color:var(--gold);}
+.btn-green{
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  border:none;border-radius:12px;padding:14px 30px;
+  color:#fff;font-weight:700;font-size:15px;
+  display:inline-flex;align-items:center;gap:9px;
+  box-shadow:0 4px 20px rgba(37,211,102,.3);
+  transition:transform .2s;width:100%;justify-content:center;
+}
+.btn-green:hover{transform:translateY(-2px);}
 
-  useEffect(() => {
-    setTimeout(() => { setLoading(false); setHeroVisible(true); }, 1800);
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const addToCart = (item, qty = 1, obs = "") => {
-    setCart(prev => {
-      const ex = prev.find(c => c.id === item.id);
-      if (ex) return prev.map(c => c.id === item.id ? { ...c, qty: c.qty + qty } : c);
-      return [...prev, { ...item, qty, obs }];
-    });
-  };
-
-  const removeFromCart = (id) => setCart(prev => prev.filter(c => c.id !== id));
-  const updateQty = (id, qty) => {
-    if (qty < 1) return removeFromCart(id);
-    setCart(prev => prev.map(c => c.id === id ? { ...c, qty } : c));
-  };
-
-  const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
-  const cartCount = cart.reduce((s, c) => s + c.qty, 0);
-
-  const sendWhatsApp = () => {
-    let msg = `🍽️ *NOVO PEDIDO - DONANA GOURMET*\n\n`;
-    msg += `👤 *Cliente:* ${orderForm.name}\n`;
-    msg += `📞 *Telefone:* ${orderForm.phone}\n`;
-    msg += `📍 *Tipo:* ${orderForm.type === "entrega" ? "Entrega" : "Retirar na loja"}\n`;
-    if (orderForm.type === "entrega") msg += `🏠 *Endereço:* ${orderForm.address}\n`;
-    msg += `\n🛒 *ITENS DO PEDIDO:*\n`;
-    cart.forEach(c => {
-      msg += `• ${c.qty}x ${c.name} — R$${(c.price * c.qty).toFixed(2)}`;
-      if (c.obs) msg += ` (Obs: ${c.obs})`;
-      msg += "\n";
-    });
-    msg += `\n💰 *TOTAL: R$${total.toFixed(2)}*\n`;
-    msg += `💳 *Pagamento:* ${orderForm.payment === "pix" ? "Pix" : orderForm.payment === "cartao" ? "Cartão" : `Dinheiro${orderForm.troco ? ` (troco p/ R$${orderForm.troco})` : ""}`}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
-    setCheckoutStep(3);
-  };
-
-  const allItems = Object.values(MENU).flat();
-  const filtered = searchQuery ? allItems.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase())) : null;
-
-  if (loading) return <LoadingScreen />;
-
-  return (
-    <div style={{ fontFamily: "'Georgia', 'Times New Roman', serif", background: "#0a0608", minHeight: "100vh", color: "#f5efe8" }}>
-      <style>{globalStyles}</style>
-
-      {/* NAVBAR */}
-      <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background: scrolled ? "rgba(10,6,8,0.95)" : "transparent",
-        backdropFilter: scrolled ? "blur(20px)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(196,160,80,0.2)" : "none",
-        transition: "all 0.4s ease",
-        padding: "0 24px",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        height: 70,
-      }}>
-        <button onClick={() => { setPage("home"); setCheckoutStep(0); }} style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 38, height: 38, borderRadius: "50%", background: "linear-gradient(135deg, #c4a050, #8b4513)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🍽️</div>
-            <div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: "#c4a050", letterSpacing: "0.05em", lineHeight: 1 }}>Donana</div>
-              <div style={{ fontSize: 10, color: "#9a7840", letterSpacing: "0.2em", textTransform: "uppercase" }}>Gourmet</div>
-            </div>
-          </div>
-        </button>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <NavBtn active={page === "home"} onClick={() => { setPage("home"); setCheckoutStep(0); }}>Início</NavBtn>
-          <NavBtn active={page === "menu"} onClick={() => setPage("menu")}>Cardápio</NavBtn>
-          <NavBtn active={page === "about"} onClick={() => setPage("about")}>Sobre</NavBtn>
-          <button onClick={() => { setPage("menu"); setCartOpen(true); }} style={{
-            position: "relative", background: "linear-gradient(135deg, #c4a050, #8b4513)", border: "none",
-            borderRadius: 8, padding: "8px 16px", color: "#fff", cursor: "pointer",
-            fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 6,
-          }}>
-            🛒
-            {cartCount > 0 && <span style={{ background: "#7a1a2e", color: "#fff", borderRadius: "50%", width: 18, height: 18, fontSize: 11, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>{cartCount}</span>}
-          </button>
-        </div>
-      </nav>
-
-      {/* PAGES */}
-      {page === "home" && <HomePage setPage={setPage} heroVisible={heroVisible} MENU={MENU} addToCart={addToCart} />}
-      {page === "menu" && (
-        <MenuPage
-          MENU={MENU} CATEGORY_ICONS={CATEGORY_ICONS} activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory} addToCart={addToCart}
-          cartOpen={cartOpen} setCartOpen={setCartOpen}
-          cart={cart} removeFromCart={removeFromCart} updateQty={updateQty} total={total}
-          cartCount={cartCount} checkoutStep={checkoutStep} setCheckoutStep={setCheckoutStep}
-          orderForm={orderForm} setOrderForm={setOrderForm} sendWhatsApp={sendWhatsApp}
-          searchQuery={searchQuery} setSearchQuery={setSearchQuery} filtered={filtered}
-        />
-      )}
-      {page === "about" && <AboutPage />}
-
-      {/* WhatsApp Float */}
-      <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`} target="_blank" rel="noopener noreferrer"
-        style={{
-          position: "fixed", bottom: 24, right: 24, zIndex: 200,
-          width: 60, height: 60, borderRadius: "50%",
-          background: "linear-gradient(135deg, #25d366, #128c7e)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          boxShadow: "0 4px 20px rgba(37,211,102,0.5)",
-          animation: "waPulse 2s infinite",
-          textDecoration: "none", fontSize: 28,
-        }}>
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-        </svg>
-      </a>
-    </div>
-  );
+/* ─── SECTION TITLE ───────────────────────── */
+.sec-title{text-align:center;margin-bottom:48px;}
+.sec-sup{font-size:11px;letter-spacing:.4em;color:var(--dim);text-transform:uppercase;margin-bottom:10px;}
+.sec-h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,6vw,50px);
+  font-weight:900;color:var(--cream);
+}
+.sec-rule{
+  width:60px;height:2px;
+  background:linear-gradient(90deg,var(--gold),#8b4513);
+  margin:16px auto 0;border-radius:1px;
 }
 
-function LoadingScreen() {
-  return (
-    <div style={{ position: "fixed", inset: 0, background: "#0a0608", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
-      <div style={{ width: 80, height: 80, borderRadius: "50%", background: "linear-gradient(135deg, #c4a050, #8b4513)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, animation: "spin 2s ease-in-out infinite", marginBottom: 24 }}>🍽️</div>
-      <div style={{ fontSize: 32, color: "#c4a050", fontWeight: 700, letterSpacing: "0.05em" }}>Donana Gourmet</div>
-      <div style={{ color: "#9a7840", marginTop: 8, letterSpacing: "0.3em", textTransform: "uppercase", fontSize: 12 }}>Carregando experiência...</div>
-      <div style={{ marginTop: 30, width: 200, height: 3, background: "#1a1014", borderRadius: 2, overflow: "hidden" }}>
-        <div style={{ height: "100%", background: "linear-gradient(90deg, #c4a050, #8b4513)", animation: "loadBar 1.5s ease-in-out infinite", borderRadius: 2 }} />
-      </div>
-    </div>
-  );
+/* ─── SPECIALS SECTION ───────────────────── */
+#specials{padding:90px 28px;max-width:1140px;margin:0 auto;}
+.grid-4{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:26px;
 }
 
-function NavBtn({ children, active, onClick }) {
-  return (
-    <button onClick={onClick} style={{
-      background: "none", border: "none", cursor: "pointer",
-      color: active ? "#c4a050" : "#9a7840",
-      fontSize: 13, fontWeight: active ? 700 : 400,
-      padding: "6px 10px", transition: "color 0.2s",
-      borderBottom: active ? "2px solid #c4a050" : "2px solid transparent",
-    }}>{children}</button>
-  );
+/* ─── MENU CARD ───────────────────────────── */
+.menu-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;overflow:hidden;
+  transition:transform .3s,box-shadow .3s;
+}
+.menu-card:hover{transform:translateY(-5px);box-shadow:0 14px 44px rgba(0,0,0,.55);}
+.card-img-wrap{position:relative;height:186px;overflow:hidden;}
+.card-img-wrap img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s ease;
+}
+.menu-card:hover .card-img-wrap img{transform:scale(1.08);}
+.card-img-fade{
+  position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(8,5,8,.72) 0%,transparent 60%);
+}
+.card-price{
+  position:absolute;bottom:12px;right:12px;
+  background:linear-gradient(135deg,var(--gold),#8b4513);
+  border-radius:9px;padding:5px 12px;
+  font-size:15px;font-weight:700;color:#fff;
+  font-family:'Playfair Display',serif;
+}
+.card-body{padding:16px 16px 18px;}
+.card-name{
+  font-family:'Playfair Display',serif;
+  font-size:15px;font-weight:700;color:#f0e0c0;
+  line-height:1.35;margin-bottom:7px;
+}
+.card-desc{font-size:12px;color:#8a7060;line-height:1.55;margin-bottom:13px;}
+.card-obs{
+  width:100%;background:var(--glass);
+  border:1px solid var(--border);border-radius:9px;
+  padding:8px 11px;color:var(--muted);font-size:12px;
+  margin-bottom:12px;resize:none;
+  transition:border-color .2s;
+}
+.card-obs:focus{outline:none;border-color:rgba(196,160,80,.5);}
+.card-obs::placeholder{color:#5a4040;}
+.btn-add{
+  width:100%;background:linear-gradient(135deg,var(--gold),#8b4513);
+  border:none;border-radius:10px;padding:10px;
+  color:#fff;font-weight:700;font-size:13px;
+  transition:background .3s,transform .15s;
+}
+.btn-add:hover{transform:scale(1.02);}
+.btn-add.added{background:linear-gradient(135deg,#2a7a3a,#1a5a2a);}
+
+/* ─── PROMO BANNER ───────────────────────── */
+#promo-banner{
+  position:relative;padding:110px 28px;text-align:center;overflow:hidden;
+}
+.promo-bg{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1300&q=80');
+  background-size:cover;background-position:center;
+  filter:brightness(.18);
+}
+.promo-ov{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(40,10,22,.7),rgba(8,5,8,.7));
+}
+.promo-inner{position:relative;}
+.promo-sup{font-size:11px;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-bottom:18px;}
+.promo-h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(30px,7vw,62px);font-weight:900;color:var(--cream);margin-bottom:20px;
+}
+.promo-h2 span{color:var(--gold);}
+.promo-p{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;color:var(--muted);max-width:480px;
+  margin:0 auto 36px;line-height:1.75;font-style:italic;
 }
 
-function HomePage({ setPage, heroVisible, MENU, addToCart }) {
-  const specials = MENU["Especiais da Casa"].slice(0, 4);
-  return (
+/* ─── REVIEWS ─────────────────────────────── */
+#reviews{padding:90px 28px;max-width:1140px;margin:0 auto;}
+.grid-reviews{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:22px;
+}
+.review-card{
+  background:linear-gradient(145deg,rgba(40,18,28,.88),rgba(18,8,14,.95));
+  border:1px solid var(--border);border-radius:16px;padding:26px;
+  backdrop-filter:blur(10px);
+}
+.review-stars{color:var(--gold);font-size:16px;margin-bottom:13px;}
+.review-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:15px;color:#d4c0a0;line-height:1.75;
+  font-style:italic;margin-bottom:18px;
+}
+.review-author{display:flex;align-items:center;gap:12px;}
+.review-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),#8b4513);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;
+}
+.review-name{color:var(--gold);font-weight:600;font-size:14px;}
+
+/* ─── INFO BAR ────────────────────────────── */
+#info-bar{
+  background:linear-gradient(90deg,var(--gold),#8b4513);
+  padding:26px 28px;
+}
+.info-bar-inner{
+  max-width:960px;margin:0 auto;
+  display:flex;flex-wrap:wrap;gap:24px;justify-content:space-around;align-items:center;
+}
+.info-item{text-align:center;color:var(--bg);}
+.info-icon{font-size:24px;margin-bottom:4px;}
+.info-text{font-size:13px;font-weight:600;}
+
+/* ─── MAP SECTION ─────────────────────────── */
+#map-section{padding:72px 28px;max-width:1140px;margin:0 auto;}
+.map-wrap{
+  border-radius:20px;overflow:hidden;
+  border:2px solid var(--border);
+  height:350px;margin-top:36px;
+}
+.map-wrap iframe{width:100%;height:100%;border:0;display:block;}
+.map-addr{text-align:center;margin-top:16px;color:var(--dim);font-size:14px;}
+
+/* ─── MENU PAGE ───────────────────────────── */
+#menu-page{padding-top:68px;}
+.menu-search-bar{
+  background:rgba(16,9,16,.98);padding:16px 28px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:68px;z-index:50;
+}
+.search-wrap{max-width:700px;margin:0 auto;position:relative;}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:16px;}
+.search-input{
+  width:100%;background:var(--glass);
+  border:1px solid var(--border);border-radius:13px;
+  padding:13px 14px 13px 44px;color:var(--cream);font-size:15px;
+}
+.search-input:focus{outline:none;border-color:rgba(196,160,80,.5);}
+.search-input::placeholder{color:#5a4050;}
+
+.menu-layout{display:flex;max-width:1180px;margin:0 auto;padding-bottom:100px;}
+
+/* Sidebar */
+.cat-sidebar{
+  width:210px;flex-shrink:0;
+  padding:26px 16px;
+  position:sticky;top:140px;align-self:flex-start;
+}
+.cat-btn{
+  display:flex;align-items:center;gap:9px;
+  width:100%;background:none;
+  border:1px solid transparent;border-radius:10px;
+  padding:10px 13px;margin-bottom:4px;
+  color:var(--dim);font-size:13px;font-weight:400;
+  text-align:left;transition:all .2s;
+}
+.cat-btn.active,.cat-btn:hover{
+  background:linear-gradient(135deg,rgba(196,160,80,.14),rgba(139,69,19,.14));
+  border-color:rgba(196,160,80,.35);
+  color:var(--gold);font-weight:700;
+}
+.cat-icon{font-size:17px;}
+
+/* Items column */
+.menu-items{flex:1;padding:26px 26px 0;}
+.cat-section{margin-bottom:54px;}
+.cat-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.cat-header-icon{font-size:30px;}
+.cat-header h2{
+  font-family:'Playfair Display',serif;
+  font-size:23px;font-weight:700;color:var(--gold);margin:0;
+}
+.cat-rule{flex:1;height:1px;background:linear-gradient(90deg,rgba(196,160,80,.3),transparent);}
+
+/* ─── FLOAT CART BTN ─────────────────────── */
+#float-cart{
+  display:none;position:fixed;bottom:106px;left:50%;
+  transform:translateX(-50%);z-index:200;
+}
+#float-cart.show{display:block;}
+.float-cart-btn{
+  background:linear-gradient(135deg,var(--gold),#8b4513);
+  border:none;border-radius:30px;padding:14px 34px;
+  color:#fff;font-weight:700;font-size:16px;
+  box-shadow:0 8px 32px rgba(196,160,80,.42);
+  display:flex;align-items:center;gap:13px;
+  white-space:nowrap;
+  transition:transform .2s;
+}
+.float-cart-btn:hover{transform:translateY(-3px);}
+
+/* ─── CART OVERLAY ───────────────────────── */
+#cart-overlay{
+  display:none;position:fixed;inset:0;z-index:600;
+}
+#cart-overlay.open{display:flex;}
+.cart-backdrop{
+  flex:1;background:rgba(0,0,0,.72);
+  backdrop-filter:blur(4px);
+}
+.cart-panel{
+  width:min(430px,100vw);
+  background:#0f0810;
+  border-left:1px solid var(--border);
+  overflow-y:auto;padding:26px;
+  display:flex;flex-direction:column;
+}
+.cart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;}
+.cart-title{font-family:'Playfair Display',serif;font-size:21px;color:var(--gold);}
+.close-btn{background:none;border:none;color:var(--dim);font-size:26px;line-height:1;}
+.cart-empty{text-align:center;color:var(--dim);padding:70px 0;}
+.cart-empty-icon{font-size:52px;margin-bottom:16px;}
+.cart-item{
+  display:flex;gap:13px;margin-bottom:15px;
+  padding:13px;background:var(--glass);
+  border:1px solid rgba(196,160,80,.09);border-radius:13px;
+}
+.cart-item-img{width:62px;height:62px;border-radius:9px;object-fit:cover;flex-shrink:0;}
+.cart-item-info{flex:1;}
+.cart-item-name{font-size:13px;font-weight:600;color:#f0e0c0;margin-bottom:4px;line-height:1.3;}
+.cart-item-price{color:var(--gold);font-size:13px;}
+.cart-item-obs{color:var(--dim);font-size:11px;margin-top:3px;}
+.cart-item-ctrl{display:flex;flex-direction:column;align-items:center;gap:7px;}
+.qty-row{display:flex;align-items:center;gap:7px;}
+.qty-btn{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(196,160,80,.18);border:none;
+  color:var(--gold);font-size:17px;line-height:1;
+  transition:background .2s;
+}
+.qty-btn:hover{background:rgba(196,160,80,.3);}
+.qty-val{color:var(--cream);font-weight:700;font-size:14px;min-width:20px;text-align:center;}
+.del-btn{background:none;border:none;color:#7a2030;font-size:19px;}
+.cart-total-row{
+  display:flex;justify-content:space-between;
+  font-size:18px;font-weight:700;color:var(--gold);
+  padding-top:16px;border-top:1px solid var(--border);
+  margin-top:8px;margin-bottom:22px;
+}
+
+/* ─── CHECKOUT STEPS ─────────────────────── */
+.step{display:none;}
+.step.active{display:block;}
+.step-label{color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;}
+.field-input{
+  width:100%;background:var(--glass);
+  border:1px solid var(--border);border-radius:11px;
+  padding:13px 15px;color:var(--cream);font-size:14px;
+  margin-bottom:18px;
+  transition:border-color .2s;
+}
+.field-input:focus{outline:none;border-color:rgba(196,160,80,.5);}
+.field-input::placeholder{color:#5a4050;}
+.type-row{display:flex;gap:13px;margin-bottom:22px;}
+.type-btn{
+  flex:1;padding:13px 9px;border-radius:11px;
+  border:2px solid var(--border);
+  background:transparent;color:var(--dim);
+  font-size:13px;font-weight:600;
+  transition:all .2s;text-align:center;
+}
+.type-btn.sel{border-color:var(--gold);background:rgba(196,160,80,.13);color:var(--gold);}
+.pay-opt{
+  display:block;padding:14px 18px;border-radius:12px;
+  border:2px solid var(--border);
+  background:rgba(255,255,255,.02);
+  color:var(--dim);font-size:15px;font-weight:700;
+  margin-bottom:11px;text-align:left;
+  transition:all .2s;
+}
+.pay-opt.sel{border-color:var(--gold);background:rgba(196,160,80,.13);color:var(--gold);}
+.order-summary{
+  background:rgba(196,160,80,.07);
+  border:1px solid var(--border);border-radius:13px;
+  padding:18px;margin-bottom:22px;
+}
+.summary-title{color:var(--dim);font-size:13px;margin-bottom:12px;}
+.summary-line{
+  display:flex;justify-content:space-between;
+  font-size:13px;color:var(--muted);margin-bottom:5px;
+}
+.summary-total{
+  display:flex;justify-content:space-between;
+  font-weight:700;color:var(--gold);font-size:16px;
+  padding-top:10px;border-top:1px solid var(--border);margin-top:8px;
+}
+
+/* ─── SUCCESS PAGE ───────────────────────── */
+#success-page{
+  display:none;min-height:100vh;
+  align-items:center;justify-content:center;
+  padding:28px;text-align:center;
+}
+#success-page.show{display:flex;}
+.success-icon{font-size:80px;margin-bottom:26px;animation:pop .6s ease-out;}
+@keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+.success-h1{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);margin-bottom:14px;}
+.success-p{color:var(--muted);font-size:17px;max-width:380px;margin:0 auto 10px;line-height:1.7;}
+.success-eta{color:var(--dim);font-size:14px;margin-bottom:34px;}
+
+/* ─── ABOUT PAGE ─────────────────────────── */
+#about-page{padding-top:68px;}
+.about-hero{
+  position:relative;padding:130px 28px 90px;text-align:center;
+}
+.about-hero-bg{
+  position:absolute;inset:0;
+  background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1300&q=80');
+  background-size:cover;background-position:center;
+  filter:brightness(.22);
+}
+.about-hero-ov{position:absolute;inset:0;background:rgba(8,5,8,.55);}
+.about-hero-inner{position:relative;}
+.about-h1{font-family:'Playfair Display',serif;font-size:clamp(38px,9vw,78px);font-weight:900;color:var(--cream);}
+.about-h1 span{color:var(--gold);}
+.about-content{max-width:820px;margin:0 auto;padding:66px 28px;}
+.story-block{display:flex;gap:26px;margin-bottom:52px;align-items:flex-start;}
+.story-icon{
+  width:58px;height:58px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(196,160,80,.18),rgba(139,69,19,.18));
+  border:2px solid rgba(196,160,80,.28);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+}
+.story-h3{font-family:'Playfair Display',serif;font-size:21px;color:var(--gold);margin-bottom:11px;}
+.story-p{
+  font-family:'Cormorant Garamond',serif;
+  color:var(--muted);line-height:1.85;font-size:17px;
+}
+.about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px;}
+.about-stat{
+  text-align:center;
+  background:rgba(40,18,28,.6);
+  border:1px solid var(--border);border-radius:16px;padding:26px;
+}
+.about-stat-num{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;}
+.about-stat-lbl{color:var(--dim);font-size:13px;margin-top:5px;}
+
+/* ─── FOOTER ──────────────────────────────── */
+footer{
+  background:#040204;
+  border-top:1px solid var(--border);
+  padding:44px 28px;text-align:center;
+}
+.footer-logo{font-family:'Playfair Display',serif;font-size:30px;color:var(--gold);font-weight:900;}
+.footer-tagline{font-size:11px;color:var(--dim);letter-spacing:.3em;text-transform:uppercase;margin:4px 0 26px;}
+.footer-links{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:26px;font-size:13px;color:var(--dim);}
+.footer-links a{color:var(--gold);transition:opacity .2s;}
+.footer-links a:hover{opacity:.75;}
+.footer-copy{font-size:12px;color:#3a2838;}
+
+/* ─── WA FLOAT ────────────────────────────── */
+#wa-float{
+  position:fixed;bottom:26px;right:26px;z-index:700;
+  width:62px;height:62px;border-radius:50%;
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 22px rgba(37,211,102,.5);
+  animation:waPulse 2.2s ease-in-out infinite;
+  transition:transform .2s;
+}
+#wa-float:hover{transform:scale(1.1);}
+@keyframes waPulse{0%,100%{box-shadow:0 4px 22px rgba(37,211,102,.5);}50%{box-shadow:0 4px 42px rgba(37,211,102,.85);}}
+
+/* ─── SCROLL ANIMATIONS ──────────────────── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.shown{opacity:1;transform:translateY(0);}
+
+/* ─── RESPONSIVE ─────────────────────────── */
+@media(max-width:768px){
+  .cat-sidebar{display:none;}
+  .menu-items{padding:18px 16px 0;}
+  .type-row{flex-direction:column;}
+  .about-stats{grid-template-columns:repeat(3,1fr);}
+  .story-block{flex-direction:column;}
+}
+@media(max-width:480px){
+  .hero-btns{flex-direction:column;align-items:center;}
+  .info-bar-inner{gap:18px;}
+  .grid-4{grid-template-columns:1fr 1fr;}
+  .card-img-wrap{height:150px;}
+  .about-stats{grid-template-columns:repeat(3,1fr);}
+  .hero-stats{gap:24px;}
+}
+@media(max-width:360px){
+  .grid-4{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="load-logo">🍽️</div>
+  <div class="load-title">Donana Gourmet</div>
+  <div class="load-sub">Preparando sua experiência…</div>
+  <div class="load-bar-wrap"><div class="load-bar"></div></div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-brand" onclick="showPage('home')">
+    <div class="nav-icon">🍽️</div>
     <div>
-      {/* HERO */}
-      <div style={{
-        position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
-        overflow: "hidden",
-      }}>
-        <div style={{
-          position: "absolute", inset: 0,
-          backgroundImage: "url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400&q=90')",
-          backgroundSize: "cover", backgroundPosition: "center",
-          filter: "brightness(0.35)",
-        }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(10,6,8,0.3) 0%, rgba(90,20,40,0.3) 50%, rgba(10,6,8,0.8) 100%)" }} />
-        {/* Decorative lines */}
-        <div style={{ position: "absolute", top: "15%", left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(196,160,80,0.3), transparent)" }} />
-        <div style={{ position: "absolute", bottom: "15%", left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(196,160,80,0.3), transparent)" }} />
-
-        <div style={{
-          position: "relative", textAlign: "center", padding: "0 24px",
-          opacity: heroVisible ? 1 : 0, transform: heroVisible ? "translateY(0)" : "translateY(40px)",
-          transition: "all 1s ease",
-        }}>
-          <div style={{ fontSize: 11, letterSpacing: "0.4em", color: "#c4a050", textTransform: "uppercase", marginBottom: 20 }}>✦ Fortaleza - CE ✦</div>
-          <h1 style={{ fontSize: "clamp(42px, 10vw, 90px)", fontWeight: 900, margin: 0, lineHeight: 1.05 }}>
-            <span style={{ display: "block", color: "#f5efe8" }}>Sabor que</span>
-            <span style={{ display: "block", background: "linear-gradient(135deg, #c4a050, #e8d5a3, #c4a050)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Transforma</span>
-            <span style={{ display: "block", color: "#f5efe8" }}>Momentos.</span>
-          </h1>
-          <p style={{ fontSize: "clamp(15px, 3vw, 20px)", color: "#c9b08a", margin: "24px auto 40px", maxWidth: 480, lineHeight: 1.7, fontStyle: "italic" }}>
-            Experiência gastronômica premium em Fortaleza. Ingredientes selecionados, sabor inesquecível.
-          </p>
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <button onClick={() => setPage("menu")} style={btnGold}>🍽️ Ver Cardápio</button>
-            <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`} target="_blank" rel="noopener noreferrer" style={{ ...btnOutline, textDecoration: "none" }}>📱 Fazer Pedido</a>
-          </div>
-          <div style={{ marginTop: 32, display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" }}>
-            {[["⭐", "4.9", "Avaliação"], ["🕐", "23h", "Fechamento"], ["🚀", "30min", "Delivery"]].map(([icon, val, label]) => (
-              <div key={label} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 22 }}>{icon}</div>
-                <div style={{ color: "#c4a050", fontWeight: 700, fontSize: 18 }}>{val}</div>
-                <div style={{ color: "#9a7840", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.15em" }}>{label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div style={{ position: "absolute", bottom: 30, left: "50%", transform: "translateX(-50%)", animation: "bounce 2s infinite", color: "#c4a050", fontSize: 24 }}>↓</div>
-      </div>
-
-      {/* MOST ORDERED */}
-      <div style={{ padding: "80px 24px", maxWidth: 1100, margin: "0 auto" }}>
-        <SectionTitle title="Especiais da Casa" sub="Os favoritos dos nossos clientes" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 24, marginTop: 40 }}>
-          {specials.map(item => <MenuCard key={item.id} item={item} addToCart={addToCart} />)}
-        </div>
-        <div style={{ textAlign: "center", marginTop: 40 }}>
-          <button onClick={() => setPage("menu")} style={btnGold}>Ver Cardápio Completo →</button>
-        </div>
-      </div>
-
-      {/* BANNER */}
-      <div style={{
-        position: "relative", padding: "100px 24px", textAlign: "center", overflow: "hidden",
-        background: "linear-gradient(135deg, #2a0d1a 0%, #1a0810 50%, #2a0d1a 100%)",
-      }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&q=80')", backgroundSize: "cover", backgroundPosition: "center", filter: "brightness(0.2)" }} />
-        <div style={{ position: "relative" }}>
-          <div style={{ fontSize: 11, letterSpacing: "0.4em", color: "#c4a050", textTransform: "uppercase", marginBottom: 16 }}>✦ Delivery ✦</div>
-          <h2 style={{ fontSize: "clamp(28px, 6vw, 56px)", fontWeight: 900, margin: "0 0 20px", color: "#f5efe8" }}>Peça Online Sem<br /><span style={{ color: "#c4a050" }}>Sair de Casa</span></h2>
-          <p style={{ color: "#c9b08a", fontSize: 17, maxWidth: 480, margin: "0 auto 32px", fontStyle: "italic" }}>Entregamos no seu endereço com toda a qualidade e capricho de sempre.</p>
-          <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`} target="_blank" rel="noopener noreferrer" style={{ ...btnGold, textDecoration: "none" }}>
-            📲 Pedir Delivery Agora
-          </a>
-        </div>
-      </div>
-
-      {/* REVIEWS */}
-      <div style={{ padding: "80px 24px", maxWidth: 1100, margin: "0 auto" }}>
-        <SectionTitle title="O que dizem nossos clientes" sub="Avaliações reais de quem já saboreou" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 20, marginTop: 40 }}>
-          {REVIEWS.map((r, i) => (
-            <div key={i} style={{
-              background: "linear-gradient(135deg, rgba(40,20,30,0.8), rgba(20,10,15,0.9))",
-              border: "1px solid rgba(196,160,80,0.2)", borderRadius: 16, padding: 24,
-              backdropFilter: "blur(10px)",
-            }}>
-              <div style={{ color: "#c4a050", fontSize: 16, marginBottom: 12 }}>{"★".repeat(r.stars)}</div>
-              <p style={{ color: "#d4c0a0", fontSize: 14, lineHeight: 1.7, margin: "0 0 16px", fontStyle: "italic" }}>"{r.text}"</p>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg, #c4a050, #8b4513)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700 }}>{r.avatar}</div>
-                <span style={{ color: "#c4a050", fontWeight: 600, fontSize: 14 }}>{r.name}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* INFO BAR */}
-      <div style={{ background: "linear-gradient(90deg, #c4a050, #8b4513)", padding: "24px" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", flexWrap: "wrap", gap: 24, justifyContent: "space-around", alignItems: "center" }}>
-          {[
-            ["📍", "Av. Heróis do Acre, 716 - Passaré, Fortaleza"],
-            ["📞", "(85) 98530-2803"],
-            ["🕐", "Aberto até as 23h"],
-            ["📸", "@donanagourmett"],
-          ].map(([icon, text]) => (
-            <div key={text} style={{ textAlign: "center", color: "#0a0608" }}>
-              <div style={{ fontSize: 22 }}>{icon}</div>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>{text}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* MAP */}
-      <div style={{ padding: "60px 24px", maxWidth: 1100, margin: "0 auto" }}>
-        <SectionTitle title="Como Chegar" sub="Estamos esperando por você" />
-        <div style={{ marginTop: 32, borderRadius: 20, overflow: "hidden", border: "2px solid rgba(196,160,80,0.3)", height: 340 }}>
-          <iframe
-            title="Donana Gourmet"
-            width="100%" height="100%"
-            style={{ border: 0, display: "block" }}
-            loading="lazy"
-            allowFullScreen
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3980.9!2d-38.531!3d-3.803!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM8KwNDgnMTEuMiJTIDM4wrAzMScxMC4wIlc!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr"
-          />
-        </div>
-        <div style={{ textAlign: "center", marginTop: 16, color: "#9a7840", fontSize: 14 }}>
-          📍 Av. Heróis do Acre, 716 - Loja 1 e 2 - Passaré, Fortaleza - CE
-        </div>
-      </div>
-
-      <Footer />
+      <div class="nav-name">Donana</div>
+      <div class="nav-tagline">Gourmet</div>
     </div>
-  );
-}
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" id="nl-home" onclick="showPage('home')">Início</button>
+    <button class="nav-link" id="nl-menu" onclick="showPage('menu')">Cardápio</button>
+    <button class="nav-link" id="nl-about" onclick="showPage('about')">Sobre</button>
+    <button class="nav-cart" id="nav-cart-btn" onclick="openCart()">🛒 <span id="nav-cart-count" class="cart-badge" style="display:none">0</span></button>
+  </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
-function MenuCard({ item, addToCart }) {
-  const [qty, setQty] = useState(0);
-  const [obs, setObs] = useState("");
-  const [added, setAdded] = useState(false);
+<!-- MOBILE MENU -->
+<div id="mobile-menu">
+  <button class="mobile-link" onclick="showPage('home');toggleMobileMenu()">Início</button>
+  <button class="mobile-link" onclick="showPage('menu');toggleMobileMenu()">Cardápio</button>
+  <button class="mobile-link" onclick="showPage('about');toggleMobileMenu()">Sobre</button>
+  <button class="mobile-link" style="color:var(--gold)" onclick="openCart();toggleMobileMenu()">Carrinho 🛒</button>
+  <button onclick="toggleMobileMenu()" style="position:absolute;top:24px;right:28px;background:none;border:none;color:var(--dim);font-size:30px;">✕</button>
+</div>
 
-  const handleAdd = () => {
-    addToCart(item, qty > 0 ? qty : 1, obs);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
-  };
+<!-- ═══════════════════════════════════════════ -->
+<!-- HOME PAGE                                   -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="page active" id="home-page">
 
-  return (
-    <div style={{
-      background: "linear-gradient(145deg, rgba(40,20,28,0.9), rgba(20,10,16,0.95))",
-      border: "1px solid rgba(196,160,80,0.15)", borderRadius: 18,
-      overflow: "hidden", transition: "transform 0.3s, box-shadow 0.3s",
-    }} className="menu-card">
-      <div style={{ position: "relative", height: 180, overflow: "hidden" }}>
-        <img src={item.img} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(10,6,8,0.7) 0%, transparent 60%)" }} />
-        <div style={{ position: "absolute", bottom: 12, right: 12, background: "linear-gradient(135deg, #c4a050, #8b4513)", borderRadius: 8, padding: "4px 10px", fontSize: 15, fontWeight: 700, color: "#fff" }}>
-          R${item.price.toFixed(2)}
-        </div>
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-line top"></div>
+    <div class="hero-line bot"></div>
+    <div class="hero-content" id="hero-content">
+      <div class="hero-badge">✦ Fortaleza — CE ✦</div>
+      <h1 class="hero-h1">
+        <span class="line1">Sabor que</span><br>
+        <span class="line2">Transforma</span><br>
+        <span class="line3">Momentos.</span>
+      </h1>
+      <p class="hero-sub">Experiência gastronômica premium em Fortaleza.<br>Ingredientes selecionados, sabor inesquecível.</p>
+      <div class="hero-btns">
+        <button class="btn-gold" onclick="showPage('menu')">🍽️ Ver Cardápio</button>
+        <a href="https://wa.me/5585985302803?text=Ol%C3%A1%2C%20vim%20atrav%C3%A9s%20do%20site%20da%20Donana%20Gourmet%20e%20gostaria%20de%20fazer%20um%20pedido." target="_blank" class="btn-outline">📲 Fazer Pedido</a>
       </div>
-      <div style={{ padding: "16px" }}>
-        <h3 style={{ margin: "0 0 6px", fontSize: 15, fontWeight: 700, color: "#f0e0c0", lineHeight: 1.3 }}>{item.name}</h3>
-        <p style={{ margin: "0 0 14px", fontSize: 12, color: "#8a7060", lineHeight: 1.5 }}>{item.desc}</p>
-        <input placeholder="Observações (opcional)" value={obs} onChange={e => setObs(e.target.value)}
-          style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(196,160,80,0.2)", borderRadius: 8, padding: "7px 10px", color: "#c9b08a", fontSize: 12, marginBottom: 12, boxSizing: "border-box" }} />
-        <button onClick={handleAdd} style={{
-          width: "100%", background: added ? "linear-gradient(135deg, #2a7a3a, #1a5a2a)" : "linear-gradient(135deg, #c4a050, #8b4513)",
-          border: "none", borderRadius: 10, padding: "10px", color: "#fff", cursor: "pointer",
-          fontWeight: 700, fontSize: 13, transition: "all 0.3s",
-        }}>
-          {added ? "✓ Adicionado!" : "🛒 Adicionar"}
-        </button>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-icon">⭐</div><div class="stat-val">4.9</div><div class="stat-label">Avaliação</div></div>
+        <div class="stat"><div class="stat-icon">🕐</div><div class="stat-val">23h</div><div class="stat-label">Fechamento</div></div>
+        <div class="stat"><div class="stat-icon">🚀</div><div class="stat-val">~35min</div><div class="stat-label">Delivery</div></div>
       </div>
     </div>
-  );
-}
+    <div class="scroll-hint">↓</div>
+  </section>
 
-function MenuPage({ MENU, CATEGORY_ICONS, activeCategory, setActiveCategory, addToCart, cartOpen, setCartOpen, cart, removeFromCart, updateQty, total, cartCount, checkoutStep, setCheckoutStep, orderForm, setOrderForm, sendWhatsApp, searchQuery, setSearchQuery, filtered }) {
-
-  if (checkoutStep === 3) return <SuccessPage setCheckoutStep={setCheckoutStep} />;
-
-  return (
-    <div style={{ paddingTop: 70 }}>
-      {/* Cart Overlay */}
-      {cartOpen && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 300, display: "flex" }}>
-          <div style={{ flex: 1, background: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }} onClick={() => setCartOpen(false)} />
-          <div style={{ width: "min(420px, 100vw)", background: "#0f0810", borderLeft: "1px solid rgba(196,160,80,0.2)", overflowY: "auto", padding: 24 }}>
-            {checkoutStep === 0 && <CartPanel cart={cart} removeFromCart={removeFromCart} updateQty={updateQty} total={total} setCartOpen={setCartOpen} setCheckoutStep={setCheckoutStep} />}
-            {checkoutStep === 1 && <DeliveryForm orderForm={orderForm} setOrderForm={setOrderForm} setCheckoutStep={setCheckoutStep} />}
-            {checkoutStep === 2 && <PaymentPanel orderForm={orderForm} setOrderForm={setOrderForm} sendWhatsApp={sendWhatsApp} total={total} cart={cart} />}
-          </div>
-        </div>
-      )}
-
-      {/* Search Bar */}
-      <div style={{ background: "rgba(20,10,16,0.98)", padding: "16px 24px", borderBottom: "1px solid rgba(196,160,80,0.15)", position: "sticky", top: 70, zIndex: 50 }}>
-        <div style={{ maxWidth: 700, margin: "0 auto", position: "relative" }}>
-          <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontSize: 16 }}>🔍</span>
-          <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Buscar no cardápio..."
-            style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(196,160,80,0.2)", borderRadius: 12, padding: "12px 12px 12px 42px", color: "#f0e0c0", fontSize: 15, boxSizing: "border-box" }} />
-        </div>
-      </div>
-
-      <div style={{ display: "flex", maxWidth: 1200, margin: "0 auto", padding: "0 0 80px" }}>
-        {/* Category Sidebar */}
-        <div style={{ width: 200, flexShrink: 0, padding: "24px 16px", position: "sticky", top: 130, alignSelf: "flex-start", display: "flex", flexDirection: "column", gap: 4 }}>
-          {Object.keys(MENU).map(cat => (
-            <button key={cat} onClick={() => { setActiveCategory(cat); setSearchQuery(""); }}
-              style={{
-                background: activeCategory === cat ? "linear-gradient(135deg, rgba(196,160,80,0.2), rgba(139,69,19,0.2))" : "none",
-                border: activeCategory === cat ? "1px solid rgba(196,160,80,0.4)" : "1px solid transparent",
-                borderRadius: 10, padding: "10px 12px", textAlign: "left", cursor: "pointer",
-                color: activeCategory === cat ? "#c4a050" : "#9a7840", fontSize: 13,
-                transition: "all 0.2s", display: "flex", alignItems: "center", gap: 8,
-              }}>
-              <span>{CATEGORY_ICONS[cat]}</span>
-              <span style={{ fontWeight: activeCategory === cat ? 700 : 400 }}>{cat}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Items */}
-        <div style={{ flex: 1, padding: "24px 24px 0" }}>
-          {filtered ? (
-            <>
-              <h2 style={{ color: "#c4a050", marginBottom: 24, fontSize: 18 }}>Resultados para "{searchQuery}" ({filtered.length})</h2>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: 20 }}>
-                {filtered.map(item => <MenuCard key={item.id} item={item} addToCart={addToCart} />)}
-              </div>
-            </>
-          ) : (
-            Object.entries(MENU).map(([cat, items]) => (
-              <div key={cat} id={`cat-${cat}`} style={{ marginBottom: 48 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
-                  <span style={{ fontSize: 28 }}>{CATEGORY_ICONS[cat]}</span>
-                  <h2 style={{ margin: 0, color: "#c4a050", fontSize: 22, fontWeight: 700 }}>{cat}</h2>
-                  <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, rgba(196,160,80,0.3), transparent)" }} />
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: 20 }}>
-                  {items.map(item => <MenuCard key={item.id} item={item} addToCart={addToCart} />)}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* Floating Cart Button */}
-      {cartCount > 0 && (
-        <div style={{ position: "fixed", bottom: 100, left: "50%", transform: "translateX(-50%)", zIndex: 100 }}>
-          <button onClick={() => { setCartOpen(true); setCheckoutStep(0); }} style={{
-            background: "linear-gradient(135deg, #c4a050, #8b4513)",
-            border: "none", borderRadius: 30, padding: "14px 32px",
-            color: "#fff", fontWeight: 700, fontSize: 16, cursor: "pointer",
-            boxShadow: "0 8px 30px rgba(196,160,80,0.4)",
-            display: "flex", alignItems: "center", gap: 12,
-          }}>
-            🛒 Ver Carrinho ({cartCount}) · R${total.toFixed(2)}
-          </button>
-        </div>
-      )}
+  <!-- SPECIALS -->
+  <section id="specials">
+    <div class="sec-title reveal">
+      <div class="sec-sup">✦ Mais Pedidos ✦</div>
+      <h2 class="sec-h2">Especiais da Casa</h2>
+      <div class="sec-rule"></div>
     </div>
-  );
-}
-
-function CartPanel({ cart, removeFromCart, updateQty, total, setCartOpen, setCheckoutStep }) {
-  return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-        <h2 style={{ margin: 0, color: "#c4a050", fontSize: 20 }}>🛒 Seu Carrinho</h2>
-        <button onClick={() => setCartOpen(false)} style={{ background: "none", border: "none", color: "#9a7840", fontSize: 24, cursor: "pointer" }}>✕</button>
-      </div>
-      {cart.length === 0 ? (
-        <div style={{ textAlign: "center", color: "#9a7840", padding: "60px 0" }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🛒</div>
-          <p>Seu carrinho está vazio</p>
-        </div>
-      ) : (
-        <>
-          {cart.map(item => (
-            <div key={item.id} style={{ display: "flex", gap: 12, marginBottom: 16, padding: 12, background: "rgba(255,255,255,0.03)", borderRadius: 12, border: "1px solid rgba(196,160,80,0.1)" }}>
-              <img src={item.img} alt={item.name} style={{ width: 60, height: 60, borderRadius: 8, objectFit: "cover" }} />
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#f0e0c0", marginBottom: 4 }}>{item.name}</div>
-                <div style={{ color: "#c4a050", fontSize: 13 }}>R${item.price.toFixed(2)}</div>
-                {item.obs && <div style={{ color: "#9a7840", fontSize: 11, marginTop: 2 }}>📝 {item.obs}</div>}
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <button onClick={() => updateQty(item.id, item.qty - 1)} style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(196,160,80,0.2)", border: "none", color: "#c4a050", cursor: "pointer", fontSize: 16 }}>−</button>
-                  <span style={{ color: "#f0e0c0", fontWeight: 700, fontSize: 14 }}>{item.qty}</span>
-                  <button onClick={() => updateQty(item.id, item.qty + 1)} style={{ width: 26, height: 26, borderRadius: "50%", background: "rgba(196,160,80,0.2)", border: "none", color: "#c4a050", cursor: "pointer", fontSize: 16 }}>+</button>
-                </div>
-                <button onClick={() => removeFromCart(item.id)} style={{ background: "none", border: "none", color: "#7a2030", cursor: "pointer", fontSize: 18 }}>🗑</button>
-              </div>
-            </div>
-          ))}
-          <div style={{ borderTop: "1px solid rgba(196,160,80,0.2)", paddingTop: 16, marginTop: 8 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 18, fontWeight: 700, color: "#c4a050", marginBottom: 20 }}>
-              <span>Total:</span>
-              <span>R${total.toFixed(2)}</span>
-            </div>
-            <button onClick={() => setCheckoutStep(1)} style={{ ...btnGold, width: "100%", justifyContent: "center" }}>
-              Finalizar Pedido →
-            </button>
-          </div>
-        </>
-      )}
+    <div class="grid-4" id="home-specials-grid"></div>
+    <div style="text-align:center;margin-top:44px;" class="reveal">
+      <button class="btn-gold" onclick="showPage('menu')">Ver Cardápio Completo →</button>
     </div>
-  );
-}
+  </section>
 
-function DeliveryForm({ orderForm, setOrderForm, setCheckoutStep }) {
-  const set = (k, v) => setOrderForm(p => ({ ...p, [k]: v }));
-  return (
-    <div>
-      <h2 style={{ color: "#c4a050", marginBottom: 24, fontSize: 20 }}>📦 Informações de Entrega</h2>
-      <Label>Nome completo</Label>
-      <Input value={orderForm.name} onChange={e => set("name", e.target.value)} placeholder="Seu nome" />
-      <Label>Telefone</Label>
-      <Input value={orderForm.phone} onChange={e => set("phone", e.target.value)} placeholder="(85) 99999-9999" />
-      <Label>Tipo de pedido</Label>
-      <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
-        {[["entrega", "🚀 Entrega"], ["retirada", "🏪 Retirar na Loja"]].map(([val, lbl]) => (
-          <button key={val} onClick={() => set("type", val)} style={{
-            flex: 1, padding: "12px 8px", borderRadius: 10, border: `2px solid ${orderForm.type === val ? "#c4a050" : "rgba(196,160,80,0.2)"}`,
-            background: orderForm.type === val ? "rgba(196,160,80,0.15)" : "transparent",
-            color: orderForm.type === val ? "#c4a050" : "#9a7840", cursor: "pointer", fontSize: 13, fontWeight: 600,
-          }}>{lbl}</button>
-        ))}
-      </div>
-      {orderForm.type === "entrega" && (
-        <>
-          <Label>Endereço de entrega</Label>
-          <Input value={orderForm.address} onChange={e => set("address", e.target.value)} placeholder="Rua, número, bairro" />
-        </>
-      )}
-      <button onClick={() => setCheckoutStep(2)} disabled={!orderForm.name || !orderForm.phone || (orderForm.type === "entrega" && !orderForm.address)}
-        style={{ ...btnGold, width: "100%", justifyContent: "center", opacity: !orderForm.name || !orderForm.phone ? 0.5 : 1 }}>
-        Continuar → Pagamento
-      </button>
+  <!-- PROMO BANNER -->
+  <section id="promo-banner">
+    <div class="promo-bg"></div>
+    <div class="promo-ov"></div>
+    <div class="promo-inner reveal">
+      <div class="promo-sup">✦ Delivery Premium ✦</div>
+      <h2 class="promo-h2">Peça Online Sem<br><span>Sair de Casa</span></h2>
+      <p class="promo-p">Entregamos no seu endereço com toda a qualidade e capricho de sempre. Rápido, seguro e delicioso.</p>
+      <a href="https://wa.me/5585985302803?text=Ol%C3%A1%2C%20vim%20atrav%C3%A9s%20do%20site%20da%20Donana%20Gourmet%20e%20gostaria%20de%20fazer%20um%20pedido." target="_blank" class="btn-gold">📲 Pedir Delivery Agora</a>
     </div>
-  );
-}
+  </section>
 
-function PaymentPanel({ orderForm, setOrderForm, sendWhatsApp, total, cart }) {
-  const set = (k, v) => setOrderForm(p => ({ ...p, [k]: v }));
-  return (
-    <div>
-      <h2 style={{ color: "#c4a050", marginBottom: 24, fontSize: 20 }}>💳 Forma de Pagamento</h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
-        {[["pix", "💰 Pix"], ["cartao", "💳 Cartão"], ["dinheiro", "💵 Dinheiro"]].map(([val, lbl]) => (
-          <button key={val} onClick={() => set("payment", val)} style={{
-            padding: "14px 18px", borderRadius: 12, border: `2px solid ${orderForm.payment === val ? "#c4a050" : "rgba(196,160,80,0.2)"}`,
-            background: orderForm.payment === val ? "rgba(196,160,80,0.15)" : "rgba(255,255,255,0.03)",
-            color: orderForm.payment === val ? "#c4a050" : "#9a7840", cursor: "pointer", fontSize: 15, fontWeight: 700, textAlign: "left",
-          }}>{lbl}</button>
-        ))}
-      </div>
-      {orderForm.payment === "dinheiro" && (
-        <>
-          <Label>Troco para quanto? (R$)</Label>
-          <Input value={orderForm.troco} onChange={e => set("troco", e.target.value)} placeholder="Ex: 100,00" />
-        </>
-      )}
-      <div style={{ background: "rgba(196,160,80,0.08)", border: "1px solid rgba(196,160,80,0.2)", borderRadius: 12, padding: 16, marginBottom: 20 }}>
-        <div style={{ color: "#9a7840", fontSize: 13, marginBottom: 8 }}>Resumo do pedido</div>
-        {cart.map(c => (
-          <div key={c.id} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#c9b08a", marginBottom: 4 }}>
-            <span>{c.qty}x {c.name}</span>
-            <span>R${(c.price * c.qty).toFixed(2)}</span>
-          </div>
-        ))}
-        <div style={{ borderTop: "1px solid rgba(196,160,80,0.2)", marginTop: 10, paddingTop: 10, display: "flex", justifyContent: "space-between", fontWeight: 700, color: "#c4a050", fontSize: 16 }}>
-          <span>Total:</span><span>R${total.toFixed(2)}</span>
-        </div>
-      </div>
-      <button onClick={sendWhatsApp} style={{ ...btnGold, width: "100%", justifyContent: "center", background: "linear-gradient(135deg, #25d366, #128c7e)" }}>
-        📲 Enviar Pedido via WhatsApp
-      </button>
+  <!-- REVIEWS -->
+  <section id="reviews">
+    <div class="sec-title reveal">
+      <div class="sec-sup">✦ Depoimentos ✦</div>
+      <h2 class="sec-h2">O que dizem nossos clientes</h2>
+      <div class="sec-rule"></div>
     </div>
-  );
-}
+    <div class="grid-reviews">
+      <div class="review-card reveal">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Melhor restaurante de Fortaleza! O filé na manteiga é simplesmente divino. Já virei cliente fiel!"</p>
+        <div class="review-author"><div class="review-avatar">MC</div><span class="review-name">Mariana Costa</span></div>
+      </div>
+      <div class="review-card reveal" style="transition-delay:.1s">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Experiência gastronômica incrível. O Arroz de Camarão é sensacional. Super recomendo para toda a família!"</p>
+        <div class="review-author"><div class="review-avatar">RO</div><span class="review-name">Rafael Oliveira</span></div>
+      </div>
+      <div class="review-card reveal" style="transition-delay:.2s">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"A Carne de Sol aos 4 queijos é um espetáculo! Atendimento impecável e entrega rápida. Nota 10!"</p>
+        <div class="review-author"><div class="review-avatar">JM</div><span class="review-name">Juliana Mendes</span></div>
+      </div>
+      <div class="review-card reveal" style="transition-delay:.3s">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Voltei mais 3 vezes essa semana. A qualidade é constante e o sabor é único. Recomendo demais!"</p>
+        <div class="review-author"><div class="review-avatar">CS</div><span class="review-name">Carlos Souza</span></div>
+      </div>
+    </div>
+  </section>
 
-function SuccessPage({ setCheckoutStep }) {
-  return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, textAlign: "center" }}>
+  <!-- INFO BAR -->
+  <div id="info-bar">
+    <div class="info-bar-inner">
+      <div class="info-item"><div class="info-icon">📍</div><div class="info-text">Av. Heróis do Acre, 716 – Passaré</div></div>
+      <div class="info-item"><div class="info-icon">📞</div><div class="info-text">(85) 98530-2803</div></div>
+      <div class="info-item"><div class="info-icon">🕐</div><div class="info-text">Aberto até as 23h</div></div>
+      <div class="info-item"><div class="info-icon">📸</div><div class="info-text">@donanagourmett</div></div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <section id="map-section">
+    <div class="sec-title reveal">
+      <div class="sec-sup">✦ Localização ✦</div>
+      <h2 class="sec-h2">Como Chegar</h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="map-wrap reveal">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3981.385!2d-38.5285!3d-3.8085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7c748e3b3cf3c5f%3A0x0!2zQXYuIEhlcsOzaXMgZG8gQWNyZSwgNzE2IC0gUGFzc2Fyw6ksIEZvcnRhbGV6YSAtIENF!5e0!3m2!1spt-BR!2sbr!4v1700000000000"
+        allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Donana Gourmet">
+      </iframe>
+    </div>
+    <p class="map-addr">📍 Av. Heróis do Acre, 716 – Loja 1 e 2 – Passaré, Fortaleza – CE</p>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Donana Gourmet</div>
+    <div class="footer-tagline">Fortaleza — CE</div>
+    <div class="footer-links">
+      <span>📍 Av. Heróis do Acre, 716 – Passaré</span>
+      <span>📞 (85) 98530-2803</span>
+      <span>🕐 Até 23h</span>
+      <a href="https://instagram.com/donanagourmett" target="_blank">📸 @donanagourmett</a>
+    </div>
+    <div class="footer-copy">© 2025 Donana Gourmet. Todos os direitos reservados.</div>
+  </footer>
+</div><!-- /home-page -->
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MENU PAGE                                   -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="page" id="menu-page">
+  <div class="menu-search-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search-input" type="text" placeholder="Buscar no cardápio…" oninput="filterMenu(this.value)">
+    </div>
+  </div>
+  <div class="menu-layout">
+    <!-- Sidebar -->
+    <div class="cat-sidebar" id="cat-sidebar"></div>
+    <!-- Items -->
+    <div class="menu-items" id="menu-items-col"></div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Donana Gourmet</div>
+    <div class="footer-tagline">Fortaleza — CE</div>
+    <div class="footer-links">
+      <span>📍 Av. Heróis do Acre, 716 – Passaré</span>
+      <span>📞 (85) 98530-2803</span>
+    </div>
+    <div class="footer-copy">© 2025 Donana Gourmet. Todos os direitos reservados.</div>
+  </footer>
+</div>
+
+<!-- Float cart btn -->
+<div id="float-cart">
+  <button class="float-cart-btn" onclick="openCart()">
+    🛒 <span id="float-cart-label">Ver Carrinho (0) · R$0,00</span>
+  </button>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ABOUT PAGE                                  -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="page" id="about-page">
+  <section class="about-hero">
+    <div class="about-hero-bg"></div>
+    <div class="about-hero-ov"></div>
+    <div class="about-hero-inner">
+      <div class="sec-sup" style="margin-bottom:14px">✦ Nossa História ✦</div>
+      <h1 class="about-h1">Donana <span>Gourmet</span></h1>
+    </div>
+  </section>
+  <div class="about-content">
+    <div class="story-block reveal">
+      <div class="story-icon">🌟</div>
       <div>
-        <div style={{ fontSize: 72, marginBottom: 24, animation: "spin 1s ease-out" }}>🎉</div>
-        <h1 style={{ color: "#c4a050", fontSize: 32, marginBottom: 12 }}>Pedido Enviado!</h1>
-        <p style={{ color: "#c9b08a", fontSize: 17, maxWidth: 380, margin: "0 auto 12px", lineHeight: 1.7 }}>
-          Seu pedido foi enviado para o WhatsApp da Donana Gourmet.
-        </p>
-        <p style={{ color: "#9a7840", fontSize: 14, marginBottom: 32 }}>⏱ Tempo estimado: 30–45 minutos</p>
-        <button onClick={() => { setCheckoutStep(0); }} style={btnGold}>← Fazer Novo Pedido</button>
+        <h3 class="story-h3">Nossa Origem</h3>
+        <p class="story-p">A Donana Gourmet nasceu da paixão pela culinária brasileira e da vontade de oferecer pratos preparados com carinho, ingredientes selecionados e sabor inesquecível.</p>
       </div>
     </div>
-  );
-}
-
-function AboutPage() {
-  return (
-    <div style={{ paddingTop: 70 }}>
-      <div style={{
-        position: "relative", padding: "120px 24px 80px", textAlign: "center",
-        backgroundImage: "url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80')",
-        backgroundSize: "cover", backgroundPosition: "center",
-      }}>
-        <div style={{ position: "absolute", inset: 0, background: "rgba(10,6,8,0.75)" }} />
-        <div style={{ position: "relative" }}>
-          <div style={{ fontSize: 11, letterSpacing: "0.4em", color: "#c4a050", textTransform: "uppercase", marginBottom: 16 }}>✦ Nossa História ✦</div>
-          <h1 style={{ fontSize: "clamp(36px, 8vw, 72px)", fontWeight: 900, color: "#f5efe8", margin: 0 }}>Donana <span style={{ color: "#c4a050" }}>Gourmet</span></h1>
-        </div>
+    <div class="story-block reveal">
+      <div class="story-icon">📈</div>
+      <div>
+        <h3 class="story-h3">Nossa Trajetória</h3>
+        <p class="story-p">Com o passar dos anos, tornou-se referência em Fortaleza por unir qualidade, atendimento acolhedor e um cardápio variado com pratos especiais, massas, risotos, petiscos e refeições artesanais.</p>
       </div>
-      <div style={{ maxWidth: 800, margin: "0 auto", padding: "60px 24px" }}>
-        {[
-          { icon: "🌟", title: "Nossa Origem", text: "A Donana Gourmet nasceu da paixão pela culinária brasileira e da vontade de oferecer pratos preparados com carinho, ingredientes selecionados e sabor inesquecível." },
-          { icon: "📈", title: "Nossa Trajetória", text: "Com o passar dos anos, tornou-se referência em Fortaleza por unir qualidade, atendimento acolhedor e um cardápio variado com pratos especiais, massas, risotos, petiscos e refeições artesanais." },
-          { icon: "✨", title: "Nossa Missão", text: "Hoje a Donana Gourmet entrega uma experiência gastronômica sofisticada, moderna e acolhedora — para quem aprecia o melhor da culinária com o calor do nordeste." },
-        ].map((s, i) => (
-          <div key={i} style={{ display: "flex", gap: 24, marginBottom: 48, alignItems: "flex-start" }}>
-            <div style={{ width: 56, height: 56, borderRadius: "50%", background: "linear-gradient(135deg, rgba(196,160,80,0.2), rgba(139,69,19,0.2))", border: "2px solid rgba(196,160,80,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>{s.icon}</div>
-            <div>
-              <h3 style={{ color: "#c4a050", margin: "0 0 10px", fontSize: 20 }}>{s.title}</h3>
-              <p style={{ color: "#c9b08a", lineHeight: 1.8, margin: 0, fontSize: 16 }}>{s.text}</p>
-            </div>
-          </div>
-        ))}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, marginTop: 40 }}>
-          {[["100+", "Itens no Cardápio"], ["4.9★", "Avaliação Média"], ["5+", "Anos de Experiência"]].map(([n, l]) => (
-            <div key={l} style={{ textAlign: "center", background: "rgba(40,20,28,0.6)", border: "1px solid rgba(196,160,80,0.2)", borderRadius: 16, padding: 24 }}>
-              <div style={{ fontSize: 32, fontWeight: 900, color: "#c4a050" }}>{n}</div>
-              <div style={{ color: "#9a7840", fontSize: 13, marginTop: 4 }}>{l}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <Footer />
     </div>
-  );
-}
-
-function SectionTitle({ title, sub }) {
-  return (
-    <div style={{ textAlign: "center" }}>
-      <div style={{ fontSize: 11, letterSpacing: "0.4em", color: "#9a7840", textTransform: "uppercase", marginBottom: 10 }}>✦ {sub} ✦</div>
-      <h2 style={{ fontSize: "clamp(26px, 5vw, 44px)", fontWeight: 900, color: "#f0e0c0", margin: 0 }}>{title}</h2>
-      <div style={{ width: 60, height: 2, background: "linear-gradient(90deg, #c4a050, #8b4513)", margin: "16px auto 0", borderRadius: 1 }} />
-    </div>
-  );
-}
-
-function Footer() {
-  return (
-    <footer style={{ background: "#050305", borderTop: "1px solid rgba(196,160,80,0.15)", padding: "40px 24px" }}>
-      <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
-        <div style={{ fontSize: 28, color: "#c4a050", fontWeight: 900, marginBottom: 4 }}>Donana Gourmet</div>
-        <div style={{ color: "#9a7840", fontSize: 11, letterSpacing: "0.3em", textTransform: "uppercase", marginBottom: 24 }}>Fortaleza - CE</div>
-        <div style={{ display: "flex", gap: 24, justifyContent: "center", flexWrap: "wrap", marginBottom: 24, fontSize: 13, color: "#9a7840" }}>
-          <span>📍 Av. Heróis do Acre, 716 - Passaré</span>
-          <span>📞 (85) 98530-2803</span>
-          <span>🕐 Até 23h</span>
-          <a href="https://instagram.com/donanagourmett" target="_blank" rel="noopener noreferrer" style={{ color: "#c4a050", textDecoration: "none" }}>📸 @donanagourmett</a>
-        </div>
-        <div style={{ color: "#4a3040", fontSize: 12 }}>© 2025 Donana Gourmet. Todos os direitos reservados.</div>
+    <div class="story-block reveal">
+      <div class="story-icon">✨</div>
+      <div>
+        <h3 class="story-h3">Nossa Missão</h3>
+        <p class="story-p">Hoje a Donana Gourmet entrega uma experiência gastronômica sofisticada, moderna e acolhedora — para quem aprecia o melhor da culinária com o calor genuíno do nordeste.</p>
       </div>
-    </footer>
-  );
-}
+    </div>
+    <div class="about-stats reveal">
+      <div class="about-stat"><div class="about-stat-num">100+</div><div class="about-stat-lbl">Itens no Cardápio</div></div>
+      <div class="about-stat"><div class="about-stat-num">4.9★</div><div class="about-stat-lbl">Avaliação Média</div></div>
+      <div class="about-stat"><div class="about-stat-num">5+</div><div class="about-stat-lbl">Anos no Mercado</div></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-logo">Donana Gourmet</div>
+    <div class="footer-tagline">Fortaleza — CE</div>
+    <div class="footer-links">
+      <span>📍 Av. Heróis do Acre, 716 – Passaré</span>
+      <span>📞 (85) 98530-2803</span>
+      <span>🕐 Até 23h</span>
+      <a href="https://instagram.com/donanagourmett" target="_blank">📸 @donanagourmett</a>
+    </div>
+    <div class="footer-copy">© 2025 Donana Gourmet. Todos os direitos reservados.</div>
+  </footer>
+</div>
 
-function Label({ children }) {
-  return <div style={{ color: "#9a7840", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>{children}</div>;
-}
+<!-- ═══════════════════════════════════════════ -->
+<!-- SUCCESS PAGE                                -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="success-page">
+  <div>
+    <div class="success-icon">🎉</div>
+    <h1 class="success-h1">Pedido Enviado!</h1>
+    <p class="success-p">Seu pedido foi encaminhado para o WhatsApp da Donana Gourmet. Em breve entraremos em contato.</p>
+    <p class="success-eta">⏱ Tempo estimado: 30 – 45 minutos</p>
+    <button class="btn-gold" onclick="resetOrder()">← Fazer Novo Pedido</button>
+  </div>
+</div>
 
-function Input({ value, onChange, placeholder }) {
-  return <input value={value} onChange={onChange} placeholder={placeholder} style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(196,160,80,0.2)", borderRadius: 10, padding: "12px 14px", color: "#f0e0c0", fontSize: 14, marginBottom: 18, boxSizing: "border-box" }} />;
-}
+<!-- ═══════════════════════════════════════════ -->
+<!-- CART OVERLAY                                -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="cart-overlay">
+  <div class="cart-backdrop" onclick="closeCart()"></div>
+  <div class="cart-panel">
+    <!-- STEP 0: CART -->
+    <div class="step active" id="step-cart">
+      <div class="cart-header">
+        <div class="cart-title">🛒 Seu Carrinho</div>
+        <button class="close-btn" onclick="closeCart()">✕</button>
+      </div>
+      <div id="cart-items-list"></div>
+      <div id="cart-actions" style="display:none">
+        <div class="cart-total-row">
+          <span>Total:</span><span id="cart-total-val">R$0,00</span>
+        </div>
+        <button class="btn-gold" style="width:100%;justify-content:center" onclick="goStep(1)">Finalizar Pedido →</button>
+      </div>
+    </div>
 
-const btnGold = {
-  background: "linear-gradient(135deg, #c4a050, #8b4513)",
-  border: "none", borderRadius: 12, padding: "14px 28px",
-  color: "#fff", fontWeight: 700, fontSize: 15, cursor: "pointer",
-  boxShadow: "0 4px 20px rgba(196,160,80,0.3)",
-  display: "inline-flex", alignItems: "center", gap: 8,
-  textDecoration: "none", transition: "transform 0.2s, box-shadow 0.2s",
+    <!-- STEP 1: DELIVERY INFO -->
+    <div class="step" id="step-delivery">
+      <div class="cart-header">
+        <div class="cart-title">📦 Informações</div>
+        <button class="close-btn" onclick="closeCart()">✕</button>
+      </div>
+      <div class="step-label">Nome completo</div>
+      <input class="field-input" id="f-name" type="text" placeholder="Seu nome completo">
+      <div class="step-label">Telefone</div>
+      <input class="field-input" id="f-phone" type="tel" placeholder="(85) 99999-9999">
+      <div class="step-label">Tipo de pedido</div>
+      <div class="type-row">
+        <button class="type-btn sel" id="t-entrega" onclick="selectType('entrega')">🚀 Entrega</button>
+        <button class="type-btn" id="t-retirada" onclick="selectType('retirada')">🏪 Retirar na Loja</button>
+      </div>
+      <div id="addr-wrap">
+        <div class="step-label">Endereço de entrega</div>
+        <input class="field-input" id="f-address" type="text" placeholder="Rua, número, bairro…">
+      </div>
+      <button class="btn-gold" style="width:100%;justify-content:center;margin-top:6px" onclick="goStep(2)">Continuar → Pagamento</button>
+      <button onclick="goStep(0)" style="width:100%;background:none;border:none;color:var(--dim);margin-top:14px;font-size:13px">← Voltar ao carrinho</button>
+    </div>
+
+    <!-- STEP 2: PAYMENT -->
+    <div class="step" id="step-payment">
+      <div class="cart-header">
+        <div class="cart-title">💳 Pagamento</div>
+        <button class="close-btn" onclick="closeCart()">✕</button>
+      </div>
+      <button class="pay-opt sel" id="p-pix" onclick="selectPay('pix')">💰 Pix</button>
+      <button class="pay-opt" id="p-cartao" onclick="selectPay('cartao')">💳 Cartão</button>
+      <button class="pay-opt" id="p-dinheiro" onclick="selectPay('dinheiro')">💵 Dinheiro</button>
+      <div id="troco-wrap" style="display:none;margin-top:4px">
+        <div class="step-label">Troco para quanto? (R$)</div>
+        <input class="field-input" id="f-troco" type="number" placeholder="Ex: 100">
+      </div>
+      <div class="order-summary" id="order-summary"></div>
+      <button class="btn-green" onclick="sendOrder()">📲 Enviar Pedido via WhatsApp</button>
+      <button onclick="goStep(1)" style="width:100%;background:none;border:none;color:var(--dim);margin-top:14px;font-size:13px">← Voltar</button>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp Float -->
+<a id="wa-float" href="https://wa.me/5585985302803?text=Ol%C3%A1%2C%20vim%20atrav%C3%A9s%20do%20site%20da%20Donana%20Gourmet%20e%20gostaria%20de%20fazer%20um%20pedido." target="_blank" title="Falar no WhatsApp">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════ */
+var MENU = {
+  "Especiais da Casa":{icon:"⭐",img:"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&q=80",items:[
+    {id:1,name:"Filé salteado na manteiga com fritas",price:47.90,desc:"Filé mignon suculento, salteado na manteiga com ervas finas, acompanhado de fritas crocantes.",img:"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80"},
+    {id:2,name:"Tábua Sertaneja",price:49.90,desc:"Tábua farta com carne de sol, queijo coalho, macaxeira, charque e vinagrete.",img:"https://images.unsplash.com/photo-1544025162-d76594f0c7e1?w=400&q=80"},
+    {id:3,name:"Maminha grelhada na manteiga com batatas sauté",price:49.90,desc:"Maminha grelhada no ponto perfeito, na manteiga temperada, com batatas sauté douradas.",img:"https://images.unsplash.com/photo-1558030006-450675393462?w=400&q=80"},
+    {id:4,name:"Carne de sol e queijo coalho na redução de rapadura",price:69.90,desc:"Carne de sol premium com queijo coalho grelhado em irresistível redução de rapadura.",img:"https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&q=80"},
+    {id:5,name:"Carne de sol aos 4 queijos",price:73.90,desc:"Carne de sol desfiada envolta em cremoso molho de quatro queijos selecionados.",img:"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80"},
+    {id:6,name:"Arroz de Camarão Cremoso",price:32.90,desc:"Arroz cremoso com camarões frescos, legumes e toque especial da casa.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"},
+    {id:7,name:"Massa Frutos do Mar",price:39.90,desc:"Massa artesanal com mix de frutos do mar em molho ao sugo com ervas frescas.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"}
+  ]},
+  "Risotos":{icon:"🍚",items:[
+    {id:10,name:"Frango com Bacon",price:23.90,desc:"Risoto cremoso de frango grelhado com bacon crocante e parmesão.",img:"https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=80"},
+    {id:11,name:"Carne de sol com calabresa",price:24.90,desc:"Risoto nordestino com carne de sol e calabresa defumada.",img:"https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=80"},
+    {id:12,name:"Filé",price:29.90,desc:"Risoto sofisticado com medalhões de filé mignon e parmesão aged.",img:"https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=80"}
+  ]},
+  "Massas e Molhos":{icon:"🍝",items:[
+    {id:20,name:"Frango com queijo",price:24.90,desc:"Massa artesanal com frango grelhado e queijo derretido.",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&q=80"},
+    {id:21,name:"Calabresa e bacon defumado",price:24.90,desc:"Massa com calabresa ao molho e bacon defumado artesanal.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"},
+    {id:22,name:"Carbonara",price:25.90,desc:"Clássica italiana com ovos, parmesão, pancetta e pimenta negra.",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&q=80"},
+    {id:23,name:"Bolonhesa",price:26.90,desc:"Ragù de carne moída ao molho de tomate fresco com ervas.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"},
+    {id:24,name:"Nordestino",price:27.90,desc:"Massa especial com carne de sol, queijo coalho e manteiga de garrafa.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"},
+    {id:25,name:"Filé",price:32.90,desc:"Massa premium com tiras de filé mignon ao molho especial da casa.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"},
+    {id:26,name:"Camarão cremoso",price:32.90,desc:"Massa ao molho cremoso com camarões frescos e especiarias.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"},
+    {id:27,name:"Camarão com bacon",price:34.90,desc:"Camarões grelhados com bacon crocante ao molho da casa.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"}
+  ]},
+  "Pastéis":{icon:"🥟",items:[
+    {id:30,name:"Queijo",price:9.90,desc:"Pastel crocante recheado com queijo derretido.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:31,name:"Misto",price:9.90,desc:"Presunto e queijo no ponto certo.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:32,name:"Pizza",price:10.90,desc:"Molho de tomate, queijo e pepperoni.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:33,name:"Frango",price:9.90,desc:"Frango desfiado temperado.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:34,name:"Frango com bacon",price:10.90,desc:"Frango e bacon crocante.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:35,name:"Frango com queijo",price:10.90,desc:"Frango cremoso com queijo.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:36,name:"Carne com queijo",price:11.90,desc:"Carne moída temperada com queijo.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:37,name:"Carne de sol com queijo",price:13.90,desc:"Carne de sol premium com queijo coalho.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:38,name:"Tudão",price:14.90,desc:"Tudo dentro: frango, carne, queijo e bacon!",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:39,name:"Chocolate",price:16.90,desc:"Recheio de chocolate cremoso. Uma tentação!",img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80"}
+  ]},
+  "Omeletes":{icon:"🍳",items:[
+    {id:40,name:"Frango com queijo",price:14.90,desc:"Omelete fofinho com frango e queijo derretido.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"},
+    {id:41,name:"Frango com bacon",price:14.90,desc:"Frango suculento e bacon crocante.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"},
+    {id:42,name:"Calabresa com queijo",price:14.90,desc:"Calabresa temperada com queijo fundido.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"},
+    {id:43,name:"Presunto e queijo",price:14.90,desc:"Clássico e irresistível.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"},
+    {id:44,name:"Legumes",price:15.90,desc:"Omelete nutritivo com legumes frescos.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"}
+  ]},
+  "Petiscos":{icon:"🍟",items:[
+    {id:50,name:"Batata frita",price:17.90,desc:"Batatas crocantes douradas na medida certa.",img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80"},
+    {id:51,name:"Batata frita com parmesão",price:18.90,desc:"Batatas fritas com parmesão ralado e ervas.",img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80"},
+    {id:52,name:"Batata com cheddar e bacon",price:18.90,desc:"Batatas cobertas com cheddar cremoso e bacon.",img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80"},
+    {id:53,name:"Isca de peixe",price:18.90,desc:"Iscas de peixe empanadas, crocantes e saborosas.",img:"https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400&q=80"},
+    {id:54,name:"Bolinha de queijo",price:18.90,desc:"Bolinhas crocantes com queijo derretido por dentro.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:55,name:"Bolinha de carne do sol",price:18.90,desc:"Carne de sol desfiada em bolinha crocante.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
+    {id:56,name:"Macaxeira frita",price:19.90,desc:"Macaxeira frita crocante por fora e macia por dentro.",img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80"},
+    {id:57,name:"Tulipas de frango crocantes",price:19.90,desc:"Coxa de frango crocante temperada com ervas especiais.",img:"https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&q=80"},
+    {id:58,name:"Camarão ao alho e óleo",price:32.90,desc:"Camarões frescos salteados no alho e azeite.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"},
+    {id:59,name:"Camarões empanados",price:35.90,desc:"Camarões empanados crocantes com molho especial.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"}
+  ]},
+  "Acompanhamentos":{icon:"🥗",items:[
+    {id:60,name:"Arroz branco",price:8.90,desc:"Arroz soltinho e perfumado.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"},
+    {id:61,name:"Arroz de leite",price:11.90,desc:"Arroz cremoso com leite e temperos especiais.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"},
+    {id:62,name:"Arroz biro biro",price:12.90,desc:"Arroz com ovos, bacon e farofa crocante.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"},
+    {id:63,name:"Arroz à grega",price:12.90,desc:"Arroz colorido com legumes e temperos.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"},
+    {id:64,name:"Baião de dois",price:12.90,desc:"Clássico nordestino de arroz com feijão verde e queijo.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"}
+  ]},
+  "Sucos":{icon:"🥤",items:[
+    {id:70,name:"Abacaxi",price:6.00,desc:"Suco natural de abacaxi fresquinho.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:71,name:"Acerola",price:6.00,desc:"Rico em vitamina C.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:72,name:"Manga",price:6.00,desc:"Manga selecionada, docinha e cremosa.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:73,name:"Cajá",price:6.00,desc:"O sabor autêntico do nordeste.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:74,name:"Goiaba",price:6.00,desc:"Goiaba madura e saborosa.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:75,name:"Limão",price:6.00,desc:"Refrescante e cítrico.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:76,name:"Tamarindo",price:6.00,desc:"Sabor único e marcante.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:77,name:"Graviola",price:6.00,desc:"Cremoso e tropical.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:78,name:"Abacaxi com morango",price:7.00,desc:"Combinação tropical refrescante.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:79,name:"Acerola com morango",price:7.00,desc:"Vitamina C em dobro.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:80,name:"Maracujá com manga",price:7.00,desc:"Tropical e irresistível.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:81,name:"Abacaxi com hortelã",price:7.00,desc:"Refrescante e digestivo.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
+    {id:82,name:"Detox",price:12.00,desc:"Mix especial de frutas e verduras para energia e bem-estar.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"}
+  ]},
+  "Bebidas":{icon:"🧃",items:[
+    {id:90,name:"Água mineral",price:2.50,desc:"500ml gelada.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
+    {id:91,name:"Água com gás",price:3.50,desc:"500ml gelada.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
+    {id:92,name:"Refrigerante lata",price:5.00,desc:"350ml gelado.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
+    {id:93,name:"Coca-Cola 1L",price:9.00,desc:"Garrafa 1 litro gelada.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
+    {id:94,name:"Coca-Cola 2L",price:13.00,desc:"Garrafa 2 litros gelada.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
+    {id:95,name:"São Geraldo 1L",price:9.00,desc:"Guaraná regional 1 litro.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
+    {id:96,name:"São Geraldo 2L",price:13.00,desc:"Guaraná regional 2 litros.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
+    {id:97,name:"Red Bull",price:12.90,desc:"Energy drink 250ml.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"}
+  ]}
 };
 
-const btnOutline = {
-  background: "transparent",
-  border: "2px solid rgba(196,160,80,0.6)", borderRadius: 12, padding: "14px 28px",
-  color: "#c4a050", fontWeight: 700, fontSize: 15, cursor: "pointer",
-  display: "inline-flex", alignItems: "center", gap: 8,
-};
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+var cart = [];
+var orderType = 'entrega';
+var payMethod = 'pix';
+var currentStep = 0;
 
-const globalStyles = `
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-10px); } }
-  @keyframes waPulse { 0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.5); } 50% { box-shadow: 0 4px 40px rgba(37,211,102,0.8); } }
-  @keyframes loadBar { 0% { width: 0%; } 100% { width: 100%; } }
-  .menu-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
-  * { -webkit-tap-highlight-color: transparent; }
-  input::placeholder { color: #6a5050; }
-  input:focus { outline: none; border-color: rgba(196,160,80,0.5) !important; }
-  button:active { transform: scale(0.97); }
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #0a0608; }
-  ::-webkit-scrollbar-thumb { background: rgba(196,160,80,0.3); border-radius: 3px; }
-  @media (max-width: 600px) {
-    div[style*="width: 200px"] { display: none !important; }
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', function(){
+  // hide loading
+  setTimeout(function(){
+    var l = document.getElementById('loading');
+    l.classList.add('hide');
+    setTimeout(function(){ l.style.display='none'; }, 700);
+    // hero reveal
+    setTimeout(function(){
+      document.getElementById('hero-content').classList.add('visible');
+    }, 200);
+  }, 1700);
+
+  buildHomeSpecials();
+  buildMenuPage();
+  initScrollAnimations();
+  initNavbarScroll();
+});
+
+/* ─── Navbar scroll ─── */
+function initNavbarScroll(){
+  window.addEventListener('scroll', function(){
+    var nav = document.getElementById('navbar');
+    if(window.scrollY > 60) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+}
+
+/* ─── Scroll reveal ─── */
+function initScrollAnimations(){
+  var els = document.querySelectorAll('.reveal');
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('shown'); }
+    });
+  },{threshold:0.12});
+  els.forEach(function(el){ obs.observe(el); });
+}
+function reObserve(){
+  var els = document.querySelectorAll('.reveal:not(.shown)');
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('shown'); }
+    });
+  },{threshold:0.12});
+  els.forEach(function(el){ obs.observe(el); });
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE NAVIGATION
+═══════════════════════════════════════════════ */
+function showPage(p){
+  document.querySelectorAll('.page').forEach(function(pg){ pg.classList.remove('active'); });
+  document.getElementById(p+'-page').classList.add('active');
+  // nav links
+  document.querySelectorAll('.nav-link').forEach(function(l){ l.classList.remove('active'); });
+  var nl = document.getElementById('nl-'+p);
+  if(nl) nl.classList.add('active');
+  window.scrollTo(0,0);
+  // success page
+  document.getElementById('success-page').classList.remove('show');
+  setTimeout(reObserve, 100);
+}
+
+/* ─── Mobile menu ─── */
+function toggleMobileMenu(){
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+/* ═══════════════════════════════════════════════
+   BUILD HOME SPECIALS
+═══════════════════════════════════════════════ */
+function buildHomeSpecials(){
+  var grid = document.getElementById('home-specials-grid');
+  var items = MENU["Especiais da Casa"].items.slice(0,4);
+  items.forEach(function(item){
+    grid.appendChild(makeCard(item));
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   BUILD MENU PAGE
+═══════════════════════════════════════════════ */
+function buildMenuPage(){
+  var sidebar = document.getElementById('cat-sidebar');
+  var col = document.getElementById('menu-items-col');
+  sidebar.innerHTML='';
+  col.innerHTML='';
+
+  Object.keys(MENU).forEach(function(cat, idx){
+    // sidebar btn
+    var btn = document.createElement('button');
+    btn.className = 'cat-btn' + (idx===0?' active':'');
+    btn.id = 'sb-'+slugify(cat);
+    btn.innerHTML = '<span class="cat-icon">'+MENU[cat].icon+'</span><span>'+cat+'</span>';
+    btn.onclick = function(){
+      document.querySelectorAll('.cat-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var sec = document.getElementById('sec-'+slugify(cat));
+      if(sec) sec.scrollIntoView({behavior:'smooth',block:'start'});
+    };
+    sidebar.appendChild(btn);
+
+    // section
+    var sec = document.createElement('div');
+    sec.className = 'cat-section';
+    sec.id = 'sec-'+slugify(cat);
+    sec.innerHTML = '<div class="cat-header"><span class="cat-header-icon">'+MENU[cat].icon+'</span><h2>'+cat+'</h2><div class="cat-rule"></div></div>';
+    var grid = document.createElement('div');
+    grid.className = 'grid-4';
+    grid.id = 'grid-'+slugify(cat);
+    MENU[cat].items.forEach(function(item){
+      grid.appendChild(makeCard(item));
+    });
+    sec.appendChild(grid);
+    col.appendChild(sec);
+  });
+}
+
+/* ─── Make card ─── */
+function makeCard(item){
+  var div = document.createElement('div');
+  div.className = 'menu-card';
+  div.innerHTML =
+    '<div class="card-img-wrap">'+
+      '<img src="'+item.img+'" alt="'+item.name+'" loading="lazy">'+
+      '<div class="card-img-fade"></div>'+
+      '<div class="card-price">R$'+fmtPrice(item.price)+'</div>'+
+    '</div>'+
+    '<div class="card-body">'+
+      '<div class="card-name">'+item.name+'</div>'+
+      '<div class="card-desc">'+item.desc+'</div>'+
+      '<textarea class="card-obs" id="obs-'+item.id+'" rows="2" placeholder="Observações (opcional)"></textarea>'+
+      '<button class="btn-add" id="add-'+item.id+'" onclick="addToCart('+item.id+')">🛒 Adicionar</button>'+
+    '</div>';
+  return div;
+}
+
+/* ─── Search ─── */
+function filterMenu(q){
+  q = q.toLowerCase().trim();
+  var col = document.getElementById('menu-items-col');
+  if(!q){
+    buildMenuPage();
+    return;
   }
-`;
+  col.innerHTML='';
+  var sec = document.createElement('div');
+  sec.className='cat-section';
+  var matches = [];
+  Object.values(MENU).forEach(function(cat){
+    cat.items.forEach(function(item){
+      if(item.name.toLowerCase().includes(q)||item.desc.toLowerCase().includes(q)){
+        matches.push(item);
+      }
+    });
+  });
+  var h = document.createElement('div');
+  h.className='cat-header';
+  h.innerHTML='<span class="cat-header-icon">🔍</span><h2>'+matches.length+' resultado(s)</h2><div class="cat-rule"></div>';
+  sec.appendChild(h);
+  var grid = document.createElement('div');
+  grid.className='grid-4';
+  if(matches.length===0){
+    grid.innerHTML='<p style="color:var(--dim);padding:20px">Nenhum item encontrado.</p>';
+  } else {
+    matches.forEach(function(item){ grid.appendChild(makeCard(item)); });
+  }
+  sec.appendChild(grid);
+  col.appendChild(sec);
+}
+
+/* ═══════════════════════════════════════════════
+   CART
+═══════════════════════════════════════════════ */
+function findItem(id){
+  var found=null;
+  Object.values(MENU).forEach(function(cat){
+    cat.items.forEach(function(item){
+      if(item.id===id) found=item;
+    });
+  });
+  return found;
+}
+
+function addToCart(id){
+  var item = findItem(id);
+  if(!item) return;
+  var obsEl = document.getElementById('obs-'+id);
+  var obs = obsEl ? obsEl.value : '';
+  var ex = cart.find(function(c){ return c.id===id; });
+  if(ex){ ex.qty++; }
+  else { cart.push({id:item.id,name:item.name,price:item.price,img:item.img,qty:1,obs:obs}); }
+  // flash btn
+  var btn = document.getElementById('add-'+id);
+  if(btn){
+    btn.textContent='✓ Adicionado!';
+    btn.classList.add('added');
+    setTimeout(function(){ btn.textContent='🛒 Adicionar'; btn.classList.remove('added'); },1400);
+  }
+  updateCartUI();
+}
+
+function removeFromCart(id){
+  cart = cart.filter(function(c){ return c.id!==id; });
+  updateCartUI();
+  renderCartItems();
+}
+
+function changeQty(id, delta){
+  var item = cart.find(function(c){ return c.id===id; });
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty < 1){ removeFromCart(id); return; }
+  updateCartUI();
+  renderCartItems();
+}
+
+function cartTotal(){
+  return cart.reduce(function(s,c){ return s+c.price*c.qty; },0);
+}
+function cartCount(){
+  return cart.reduce(function(s,c){ return s+c.qty; },0);
+}
+
+function updateCartUI(){
+  var cnt = cartCount();
+  var total = cartTotal();
+  // navbar badge
+  var badge = document.getElementById('nav-cart-count');
+  badge.textContent = cnt;
+  badge.style.display = cnt>0 ? 'flex' : 'none';
+  // float btn
+  var fc = document.getElementById('float-cart');
+  if(cnt>0){
+    fc.classList.add('show');
+    document.getElementById('float-cart-label').textContent =
+      'Ver Carrinho ('+cnt+') · R$'+fmtPrice(total);
+  } else {
+    fc.classList.remove('show');
+  }
+}
+
+function renderCartItems(){
+  var list = document.getElementById('cart-items-list');
+  var actions = document.getElementById('cart-actions');
+  if(cart.length===0){
+    list.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Seu carrinho está vazio</p></div>';
+    actions.style.display='none';
+    return;
+  }
+  actions.style.display='block';
+  list.innerHTML='';
+  cart.forEach(function(c){
+    var div=document.createElement('div');
+    div.className='cart-item';
+    div.innerHTML=
+      '<img class="cart-item-img" src="'+c.img+'" alt="'+c.name+'">'+
+      '<div class="cart-item-info">'+
+        '<div class="cart-item-name">'+c.name+'</div>'+
+        '<div class="cart-item-price">R$'+fmtPrice(c.price)+'</div>'+
+        (c.obs?'<div class="cart-item-obs">📝 '+c.obs+'</div>':'')+
+      '</div>'+
+      '<div class="cart-item-ctrl">'+
+        '<div class="qty-row">'+
+          '<button class="qty-btn" onclick="changeQty('+c.id+',-1)">−</button>'+
+          '<span class="qty-val">'+c.qty+'</span>'+
+          '<button class="qty-btn" onclick="changeQty('+c.id+',1)">+</button>'+
+        '</div>'+
+        '<button class="del-btn" onclick="removeFromCart('+c.id+')">🗑</button>'+
+      '</div>';
+    list.appendChild(div);
+  });
+  document.getElementById('cart-total-val').textContent='R$'+fmtPrice(cartTotal());
+}
+
+/* ─── Cart open/close ─── */
+function openCart(){
+  renderCartItems();
+  goStep(0);
+  document.getElementById('cart-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeCart(){
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ─── Steps ─── */
+function goStep(n){
+  if(n===1){
+    if(cart.length===0){ alert('Adicione itens ao carrinho primeiro!'); return; }
+  }
+  if(n===2){
+    var name=document.getElementById('f-name').value.trim();
+    var phone=document.getElementById('f-phone').value.trim();
+    var addr=document.getElementById('f-address').value.trim();
+    if(!name||!phone){ alert('Preencha nome e telefone.'); return; }
+    if(orderType==='entrega'&&!addr){ alert('Informe o endereço de entrega.'); return; }
+  }
+  currentStep=n;
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+  var stepIds=['step-cart','step-delivery','step-payment'];
+  document.getElementById(stepIds[n]).classList.add('active');
+  if(n===2) buildOrderSummary();
+}
+
+/* ─── Delivery type ─── */
+function selectType(t){
+  orderType=t;
+  document.getElementById('t-entrega').classList.toggle('sel', t==='entrega');
+  document.getElementById('t-retirada').classList.toggle('sel', t==='retirada');
+  document.getElementById('addr-wrap').style.display = t==='entrega'?'block':'none';
+}
+
+/* ─── Payment ─── */
+function selectPay(p){
+  payMethod=p;
+  ['pix','cartao','dinheiro'].forEach(function(x){
+    document.getElementById('p-'+x).classList.toggle('sel', x===p);
+  });
+  document.getElementById('troco-wrap').style.display = p==='dinheiro'?'block':'none';
+}
+
+/* ─── Order summary ─── */
+function buildOrderSummary(){
+  var s = document.getElementById('order-summary');
+  var lines = cart.map(function(c){
+    return '<div class="summary-line"><span>'+c.qty+'× '+c.name+'</span><span>R$'+fmtPrice(c.price*c.qty)+'</span></div>';
+  }).join('');
+  s.innerHTML='<div class="summary-title">Resumo do pedido</div>'+lines+
+    '<div class="summary-total"><span>Total:</span><span>R$'+fmtPrice(cartTotal())+'</span></div>';
+}
+
+/* ─── Send order ─── */
+function sendOrder(){
+  var name=document.getElementById('f-name').value.trim();
+  var phone=document.getElementById('f-phone').value.trim();
+  var addr=document.getElementById('f-address').value.trim();
+  var troco=document.getElementById('f-troco').value.trim();
+
+  var msg='🍽️ *NOVO PEDIDO – DONANA GOURMET*\n\n';
+  msg+='👤 *Cliente:* '+name+'\n';
+  msg+='📞 *Telefone:* '+phone+'\n';
+  msg+='📍 *Tipo:* '+(orderType==='entrega'?'Entrega':'Retirar na Loja')+'\n';
+  if(orderType==='entrega') msg+='🏠 *Endereço:* '+addr+'\n';
+  msg+='\n🛒 *ITENS DO PEDIDO:*\n';
+  cart.forEach(function(c){
+    msg+='• '+c.qty+'× '+c.name+' — R$'+fmtPrice(c.price*c.qty);
+    if(c.obs) msg+=' (Obs: '+c.obs+')';
+    msg+='\n';
+  });
+  msg+='\n💰 *TOTAL: R$'+fmtPrice(cartTotal())+'*\n';
+  var payLabel = payMethod==='pix'?'Pix':payMethod==='cartao'?'Cartão':'Dinheiro'+(troco?' (troco p/ R$'+troco+')':'');
+  msg+='💳 *Pagamento:* '+payLabel;
+
+  window.open('https://wa.me/5585985302803?text='+encodeURIComponent(msg),'_blank');
+  closeCart();
+  showSuccessPage();
+}
+
+function showSuccessPage(){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('success-page').classList.add('show');
+  window.scrollTo(0,0);
+}
+
+function resetOrder(){
+  cart=[];
+  orderType='entrega';
+  payMethod='pix';
+  currentStep=0;
+  updateCartUI();
+  document.getElementById('f-name').value='';
+  document.getElementById('f-phone').value='';
+  document.getElementById('f-address').value='';
+  document.getElementById('f-troco').value='';
+  document.getElementById('success-page').classList.remove('show');
+  showPage('home');
+}
+
+/* ═══════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════ */
+function fmtPrice(n){
+  return n.toFixed(2).replace('.',',');
+}
+function slugify(s){
+  return s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+}
+</script>
+</body>
+</html>
