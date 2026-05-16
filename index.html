@@ -10,30 +10,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --wine:     #5a0e22;
-  --wine-dark:#2e0710;
-  --gold:     #c4a050;
-  --gold-lt:  #e8d5a3;
-  --gold-dk:  #8b6914;
-  --cream:    #f5efe8;
-  --muted:    #c9b08a;
-  --dim:      #9a7840;
-  --bg:       #080508;
-  --bg2:      #100910;
-  --card:     rgba(32,14,22,0.92);
-  --border:   rgba(196,160,80,0.18);
-  --glass:    rgba(255,255,255,0.04);
+:root{
+  --wine:#5a0e22;--wine-dark:#2e0710;
+  --gold:#c4a050;--gold-lt:#e8d5a3;--gold-dk:#8b6914;
+  --cream:#f5efe8;--muted:#c9b08a;--dim:#9a7840;
+  --bg:#080508;--bg2:#100910;
+  --card:rgba(32,14,22,0.92);
+  --border:rgba(196,160,80,0.18);
+  --glass:rgba(255,255,255,0.04);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--cream);
-  overflow-x:hidden;
-  -webkit-tap-highlight-color:transparent;
-}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--cream);overflow-x:hidden;-webkit-tap-highlight-color:transparent;}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--gold-dk);border-radius:3px;}
@@ -42,434 +30,194 @@ button{cursor:pointer;font-family:'DM Sans',sans-serif;}
 input,textarea,select{font-family:'DM Sans',sans-serif;}
 img{display:block;}
 
-/* ─── LOADING ─────────────────────────────── */
-#loading{
-  position:fixed;inset:0;z-index:9999;
-  background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transition:opacity .6s ease, visibility .6s ease;
-}
+/* LOADING */
+#loading{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease;}
 #loading.hide{opacity:0;visibility:hidden;}
-.load-logo{
-  width:90px;height:90px;border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--wine));
-  display:flex;align-items:center;justify-content:center;
-  font-size:40px;margin-bottom:28px;
-  animation:loadSpin 2s ease-in-out infinite;
-}
-.load-title{
-  font-family:'Playfair Display',serif;
-  font-size:34px;color:var(--gold);font-weight:900;
-  letter-spacing:.06em;margin-bottom:6px;
-}
+.load-logo{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--wine));display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:28px;animation:loadSpin 2s ease-in-out infinite;}
+.load-title{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;letter-spacing:.06em;margin-bottom:6px;}
 .load-sub{font-size:11px;color:var(--dim);letter-spacing:.35em;text-transform:uppercase;margin-bottom:36px;}
 .load-bar-wrap{width:220px;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;}
 .load-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--wine));border-radius:2px;animation:loadProg 1.6s ease-in-out infinite;}
 @keyframes loadSpin{0%,100%{transform:rotate(0deg) scale(1);}50%{transform:rotate(180deg) scale(1.1);}}
-@keyframes loadProg{0%{width:0;transform:translateX(0);}100%{width:100%;}}
+@keyframes loadProg{0%{width:0;}100%{width:100%;}}
 
-/* ─── NAVBAR ──────────────────────────────── */
-#navbar{
-  position:fixed;top:0;left:0;right:0;z-index:500;
-  height:68px;padding:0 28px;
-  display:flex;align-items:center;justify-content:space-between;
-  transition:background .4s,backdrop-filter .4s,border-color .4s;
-  border-bottom:1px solid transparent;
-}
-#navbar.scrolled{
-  background:rgba(8,5,8,.94);
-  backdrop-filter:blur(22px);
-  border-color:var(--border);
-}
+/* NAVBAR */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:500;height:68px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,backdrop-filter .4s,border-color .4s;border-bottom:1px solid transparent;}
+#navbar.scrolled{background:rgba(8,5,8,.94);backdrop-filter:blur(22px);border-color:var(--border);}
 .nav-brand{display:flex;align-items:center;gap:11px;cursor:pointer;}
-.nav-icon{
-  width:40px;height:40px;border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--wine));
-  display:flex;align-items:center;justify-content:center;
-  font-size:19px;flex-shrink:0;
-}
+.nav-icon{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--wine));display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
 .nav-name{font-family:'Playfair Display',serif;font-size:19px;color:var(--gold);font-weight:700;letter-spacing:.04em;line-height:1.1;}
 .nav-tagline{font-size:10px;color:var(--dim);letter-spacing:.22em;text-transform:uppercase;}
 .nav-links{display:flex;align-items:center;gap:6px;}
-.nav-link{
-  background:none;border:none;
-  font-size:13px;color:var(--dim);
-  padding:7px 11px;border-bottom:2px solid transparent;
-  transition:color .2s,border-color .2s;font-weight:400;
-}
+.nav-link{background:none;border:none;font-size:13px;color:var(--dim);padding:7px 11px;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;font-weight:400;}
 .nav-link.active,.nav-link:hover{color:var(--gold);border-color:var(--gold);}
-.nav-cart{
-  position:relative;
-  background:linear-gradient(135deg,var(--gold),var(--wine));
-  border:none;border-radius:9px;padding:8px 16px;
-  color:#fff;font-size:13px;font-weight:600;
-  display:flex;align-items:center;gap:7px;
-  transition:transform .2s,box-shadow .2s;
-}
+.nav-cart{position:relative;background:linear-gradient(135deg,var(--gold),var(--wine));border:none;border-radius:9px;padding:8px 16px;color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;transition:transform .2s,box-shadow .2s;}
 .nav-cart:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(196,160,80,.35);}
-.cart-badge{
-  background:var(--wine);color:#fff;border-radius:50%;
-  width:19px;height:19px;font-size:11px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-}
-/* hamburger mobile */
+.cart-badge{background:var(--wine);color:#fff;border-radius:50%;width:19px;height:19px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
 .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:6px;}
 .hamburger span{display:block;width:24px;height:2px;background:var(--gold);border-radius:2px;transition:.3s;}
-@media(max-width:640px){
-  .nav-links{display:none;}.hamburger{display:flex;}
-  .nav-link{font-size:11px;}
-}
-/* mobile menu overlay */
-#mobile-menu{
-  display:none;position:fixed;inset:0;z-index:490;
-  background:rgba(8,5,8,.97);
-  flex-direction:column;align-items:center;justify-content:center;gap:20px;
-}
+@media(max-width:640px){.nav-links{display:none;}.hamburger{display:flex;}}
+#mobile-menu{display:none;position:fixed;inset:0;z-index:490;background:rgba(8,5,8,.97);flex-direction:column;align-items:center;justify-content:center;gap:20px;}
 #mobile-menu.open{display:flex;}
-.mobile-link{
-  font-family:'Playfair Display',serif;
-  font-size:28px;color:var(--muted);background:none;border:none;
-  transition:color .2s;font-weight:700;
-}
+.mobile-link{font-family:'Playfair Display',serif;font-size:28px;color:var(--muted);background:none;border:none;transition:color .2s;font-weight:700;}
 .mobile-link:hover{color:var(--gold);}
 
-/* ─── PAGES ───────────────────────────────── */
+/* PAGES */
 .page{display:none;}
 .page.active{display:block;}
 
-/* ─── HERO ────────────────────────────────── */
-#hero{
-  position:relative;min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
-.hero-bg{
-  position:absolute;inset:0;
-  background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85');
-  background-size:cover;background-position:center;
-  filter:brightness(.28);
-  transform:scale(1.05);
-  animation:heroZoom 20s ease-in-out infinite alternate;
-}
+/* HERO */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85');background-size:cover;background-position:center;filter:brightness(.28);transform:scale(1.05);animation:heroZoom 20s ease-in-out infinite alternate;}
 @keyframes heroZoom{from{transform:scale(1.05);}to{transform:scale(1.12);}}
-.hero-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(8,5,8,.25) 0%,rgba(60,12,28,.3) 50%,rgba(8,5,8,.82) 100%);
-}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,5,8,.25) 0%,rgba(60,12,28,.3) 50%,rgba(8,5,8,.82) 100%);}
 .hero-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(196,160,80,.3),transparent);}
-.hero-line.top{top:14%;}
-.hero-line.bot{bottom:14%;}
-.hero-content{
-  position:relative;text-align:center;padding:0 24px;
-  opacity:0;transform:translateY(36px);
-  transition:opacity 1s ease,transform 1s ease;
-}
+.hero-line.top{top:14%;}.hero-line.bot{bottom:14%;}
+.hero-content{position:relative;text-align:center;padding:0 24px;opacity:0;transform:translateY(36px);transition:opacity 1s ease,transform 1s ease;}
 .hero-content.visible{opacity:1;transform:translateY(0);}
-.hero-badge{
-  font-size:11px;letter-spacing:.4em;color:var(--gold);
-  text-transform:uppercase;margin-bottom:22px;
-  display:inline-block;
-}
-.hero-h1{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(44px,10vw,96px);
-  font-weight:900;line-height:1.04;margin-bottom:24px;
-}
+.hero-badge{font-size:11px;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-bottom:22px;display:inline-block;}
+.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(44px,10vw,96px);font-weight:900;line-height:1.04;margin-bottom:24px;}
 .hero-h1 .line1,.hero-h1 .line3{color:var(--cream);}
-.hero-h1 .line2{
-  background:linear-gradient(135deg,var(--gold),var(--gold-lt),var(--gold));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  background-clip:text;
-}
-.hero-sub{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(16px,3vw,21px);color:var(--muted);
-  max-width:500px;margin:0 auto 40px;line-height:1.75;font-style:italic;
-}
+.hero-h1 .line2{background:linear-gradient(135deg,var(--gold),var(--gold-lt),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-family:'Cormorant Garamond',serif;font-size:clamp(16px,3vw,21px);color:var(--muted);max-width:500px;margin:0 auto 40px;line-height:1.75;font-style:italic;}
 .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:50px;}
 .hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
 .stat{text-align:center;}
 .stat-icon{font-size:22px;margin-bottom:4px;}
 .stat-val{font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);font-weight:700;}
 .stat-label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.15em;}
-.scroll-hint{
-  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
-  color:var(--gold);font-size:26px;
-  animation:bounce 2s ease-in-out infinite;
-}
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);color:var(--gold);font-size:26px;animation:bounce 2s ease-in-out infinite;}
 @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-12px);}}
 
-/* ─── BUTTONS ─────────────────────────────── */
-.btn-gold{
-  background:linear-gradient(135deg,var(--gold),#8b4513);
-  border:none;border-radius:12px;padding:14px 30px;
-  color:#fff;font-weight:700;font-size:15px;
-  display:inline-flex;align-items:center;gap:9px;
-  box-shadow:0 4px 20px rgba(196,160,80,.3);
-  transition:transform .2s,box-shadow .2s;
-}
+/* BUTTONS */
+.btn-gold{background:linear-gradient(135deg,var(--gold),#8b4513);border:none;border-radius:12px;padding:14px 30px;color:#fff;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:9px;box-shadow:0 4px 20px rgba(196,160,80,.3);transition:transform .2s,box-shadow .2s;}
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(196,160,80,.45);}
-.btn-outline{
-  background:transparent;
-  border:2px solid rgba(196,160,80,.55);border-radius:12px;padding:12px 28px;
-  color:var(--gold);font-weight:700;font-size:15px;
-  display:inline-flex;align-items:center;gap:9px;
-  transition:background .2s,border-color .2s;
-}
+.btn-outline{background:transparent;border:2px solid rgba(196,160,80,.55);border-radius:12px;padding:12px 28px;color:var(--gold);font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:9px;transition:background .2s,border-color .2s;}
 .btn-outline:hover{background:rgba(196,160,80,.1);border-color:var(--gold);}
-.btn-green{
-  background:linear-gradient(135deg,#25d366,#128c7e);
-  border:none;border-radius:12px;padding:14px 30px;
-  color:#fff;font-weight:700;font-size:15px;
-  display:inline-flex;align-items:center;gap:9px;
-  box-shadow:0 4px 20px rgba(37,211,102,.3);
-  transition:transform .2s;width:100%;justify-content:center;
-}
+.btn-green{background:linear-gradient(135deg,#25d366,#128c7e);border:none;border-radius:12px;padding:14px 30px;color:#fff;font-weight:700;font-size:15px;display:inline-flex;align-items:center;gap:9px;box-shadow:0 4px 20px rgba(37,211,102,.3);transition:transform .2s;width:100%;justify-content:center;}
 .btn-green:hover{transform:translateY(-2px);}
 
-/* ─── SECTION TITLE ───────────────────────── */
+/* SECTION TITLE */
 .sec-title{text-align:center;margin-bottom:48px;}
 .sec-sup{font-size:11px;letter-spacing:.4em;color:var(--dim);text-transform:uppercase;margin-bottom:10px;}
-.sec-h2{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(28px,6vw,50px);
-  font-weight:900;color:var(--cream);
-}
-.sec-rule{
-  width:60px;height:2px;
-  background:linear-gradient(90deg,var(--gold),#8b4513);
-  margin:16px auto 0;border-radius:1px;
-}
+.sec-h2{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,50px);font-weight:900;color:var(--cream);}
+.sec-rule{width:60px;height:2px;background:linear-gradient(90deg,var(--gold),#8b4513);margin:16px auto 0;border-radius:1px;}
 
-/* ─── SPECIALS SECTION ───────────────────── */
+/* SPECIALS */
 #specials{padding:90px 28px;max-width:1140px;margin:0 auto;}
-.grid-4{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:26px;
-}
+.grid-4{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:26px;}
 
-/* ─── MENU CARD ───────────────────────────── */
+/* MENU CARD — premium hover effects */
 .menu-card{
-  background:var(--card);
-  border:1px solid var(--border);
+  background:var(--card);border:1px solid var(--border);
   border-radius:18px;overflow:hidden;
-  transition:transform .3s,box-shadow .3s;
+  transition:transform .35s cubic-bezier(.25,.46,.45,.94),box-shadow .35s,border-color .35s;
 }
-.menu-card:hover{transform:translateY(-5px);box-shadow:0 14px 44px rgba(0,0,0,.55);}
-.card-img-wrap{position:relative;height:186px;overflow:hidden;}
+.menu-card:hover{
+  transform:translateY(-7px);
+  box-shadow:0 22px 55px rgba(0,0,0,.65),0 0 0 1px rgba(196,160,80,.3);
+  border-color:rgba(196,160,80,.35);
+}
+.card-img-wrap{position:relative;height:192px;overflow:hidden;}
+/* image zoom + saturate on hover */
 .card-img-wrap img{
   width:100%;height:100%;object-fit:cover;
-  transition:transform .5s ease;
+  transition:transform .6s cubic-bezier(.25,.46,.45,.94),filter .45s;
 }
-.menu-card:hover .card-img-wrap img{transform:scale(1.08);}
-.card-img-fade{
-  position:absolute;inset:0;
-  background:linear-gradient(0deg,rgba(8,5,8,.72) 0%,transparent 60%);
+.menu-card:hover .card-img-wrap img{transform:scale(1.1);filter:brightness(1.1) saturate(1.2);}
+/* light shimmer sweep */
+.card-img-wrap::before{
+  content:'';position:absolute;inset:0;z-index:2;
+  background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.09) 50%,transparent 65%);
+  transform:translateX(-120%);transition:transform .65s ease;
 }
-.card-price{
-  position:absolute;bottom:12px;right:12px;
-  background:linear-gradient(135deg,var(--gold),#8b4513);
-  border-radius:9px;padding:5px 12px;
-  font-size:15px;font-weight:700;color:#fff;
-  font-family:'Playfair Display',serif;
-}
+.menu-card:hover .card-img-wrap::before{transform:translateX(120%);}
+/* soft dark vignette always visible */
+.card-img-fade{position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(8,5,8,.78) 0%,rgba(8,5,8,.1) 55%,transparent 100%);}
+/* category label */
+.card-cat-tag{position:absolute;top:11px;left:11px;z-index:3;background:rgba(8,5,8,.6);backdrop-filter:blur(8px);border:1px solid rgba(196,160,80,.28);border-radius:6px;padding:3px 9px;font-size:10px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;}
+/* price badge */
+.card-price{position:absolute;bottom:12px;right:12px;z-index:3;background:linear-gradient(135deg,var(--gold),#8b4513);border-radius:9px;padding:5px 13px;font-size:15px;font-weight:700;color:#fff;font-family:'Playfair Display',serif;box-shadow:0 2px 10px rgba(0,0,0,.45);}
 .card-body{padding:16px 16px 18px;}
-.card-name{
-  font-family:'Playfair Display',serif;
-  font-size:15px;font-weight:700;color:#f0e0c0;
-  line-height:1.35;margin-bottom:7px;
-}
+.card-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#f0e0c0;line-height:1.35;margin-bottom:7px;}
 .card-desc{font-size:12px;color:#8a7060;line-height:1.55;margin-bottom:13px;}
-.card-obs{
-  width:100%;background:var(--glass);
-  border:1px solid var(--border);border-radius:9px;
-  padding:8px 11px;color:var(--muted);font-size:12px;
-  margin-bottom:12px;resize:none;
-  transition:border-color .2s;
-}
+.card-obs{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:9px;padding:8px 11px;color:var(--muted);font-size:12px;margin-bottom:12px;resize:none;transition:border-color .2s;}
 .card-obs:focus{outline:none;border-color:rgba(196,160,80,.5);}
 .card-obs::placeholder{color:#5a4040;}
-.btn-add{
-  width:100%;background:linear-gradient(135deg,var(--gold),#8b4513);
-  border:none;border-radius:10px;padding:10px;
-  color:#fff;font-weight:700;font-size:13px;
-  transition:background .3s,transform .15s;
-}
-.btn-add:hover{transform:scale(1.02);}
+.btn-add{width:100%;background:linear-gradient(135deg,var(--gold),#8b4513);border:none;border-radius:10px;padding:10px;color:#fff;font-weight:700;font-size:13px;transition:background .3s,transform .15s,box-shadow .2s;}
+.btn-add:hover{transform:scale(1.02);box-shadow:0 4px 14px rgba(196,160,80,.4);}
 .btn-add.added{background:linear-gradient(135deg,#2a7a3a,#1a5a2a);}
 
-/* ─── PROMO BANNER ───────────────────────── */
-#promo-banner{
-  position:relative;padding:110px 28px;text-align:center;overflow:hidden;
-}
-.promo-bg{
-  position:absolute;inset:0;
-  background-image:url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1300&q=80');
-  background-size:cover;background-position:center;
-  filter:brightness(.18);
-}
-.promo-ov{
-  position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(40,10,22,.7),rgba(8,5,8,.7));
-}
+/* PROMO BANNER */
+#promo-banner{position:relative;padding:110px 28px;text-align:center;overflow:hidden;}
+.promo-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1300&q=80');background-size:cover;background-position:center;filter:brightness(.18);}
+.promo-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(40,10,22,.7),rgba(8,5,8,.7));}
 .promo-inner{position:relative;}
 .promo-sup{font-size:11px;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;margin-bottom:18px;}
-.promo-h2{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(30px,7vw,62px);font-weight:900;color:var(--cream);margin-bottom:20px;
-}
+.promo-h2{font-family:'Playfair Display',serif;font-size:clamp(30px,7vw,62px);font-weight:900;color:var(--cream);margin-bottom:20px;}
 .promo-h2 span{color:var(--gold);}
-.promo-p{
-  font-family:'Cormorant Garamond',serif;
-  font-size:18px;color:var(--muted);max-width:480px;
-  margin:0 auto 36px;line-height:1.75;font-style:italic;
-}
+.promo-p{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--muted);max-width:480px;margin:0 auto 36px;line-height:1.75;font-style:italic;}
 
-/* ─── REVIEWS ─────────────────────────────── */
+/* REVIEWS */
 #reviews{padding:90px 28px;max-width:1140px;margin:0 auto;}
-.grid-reviews{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:22px;
-}
-.review-card{
-  background:linear-gradient(145deg,rgba(40,18,28,.88),rgba(18,8,14,.95));
-  border:1px solid var(--border);border-radius:16px;padding:26px;
-  backdrop-filter:blur(10px);
-}
+.grid-reviews{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px;}
+.review-card{background:linear-gradient(145deg,rgba(40,18,28,.88),rgba(18,8,14,.95));border:1px solid var(--border);border-radius:16px;padding:26px;backdrop-filter:blur(10px);}
 .review-stars{color:var(--gold);font-size:16px;margin-bottom:13px;}
-.review-text{
-  font-family:'Cormorant Garamond',serif;
-  font-size:15px;color:#d4c0a0;line-height:1.75;
-  font-style:italic;margin-bottom:18px;
-}
+.review-text{font-family:'Cormorant Garamond',serif;font-size:15px;color:#d4c0a0;line-height:1.75;font-style:italic;margin-bottom:18px;}
 .review-author{display:flex;align-items:center;gap:12px;}
-.review-avatar{
-  width:38px;height:38px;border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),#8b4513);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;flex-shrink:0;
-}
+.review-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#8b4513);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
 .review-name{color:var(--gold);font-weight:600;font-size:14px;}
 
-/* ─── INFO BAR ────────────────────────────── */
-#info-bar{
-  background:linear-gradient(90deg,var(--gold),#8b4513);
-  padding:26px 28px;
-}
-.info-bar-inner{
-  max-width:960px;margin:0 auto;
-  display:flex;flex-wrap:wrap;gap:24px;justify-content:space-around;align-items:center;
-}
+/* INFO BAR */
+#info-bar{background:linear-gradient(90deg,var(--gold),#8b4513);padding:26px 28px;}
+.info-bar-inner{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;justify-content:space-around;align-items:center;}
 .info-item{text-align:center;color:var(--bg);}
 .info-icon{font-size:24px;margin-bottom:4px;}
 .info-text{font-size:13px;font-weight:600;}
 
-/* ─── MAP SECTION ─────────────────────────── */
+/* MAP */
 #map-section{padding:72px 28px;max-width:1140px;margin:0 auto;}
-.map-wrap{
-  border-radius:20px;overflow:hidden;
-  border:2px solid var(--border);
-  height:350px;margin-top:36px;
-}
+.map-wrap{border-radius:20px;overflow:hidden;border:2px solid var(--border);height:350px;margin-top:36px;}
 .map-wrap iframe{width:100%;height:100%;border:0;display:block;}
 .map-addr{text-align:center;margin-top:16px;color:var(--dim);font-size:14px;}
 
-/* ─── MENU PAGE ───────────────────────────── */
+/* MENU PAGE */
 #menu-page{padding-top:68px;}
-.menu-search-bar{
-  background:rgba(16,9,16,.98);padding:16px 28px;
-  border-bottom:1px solid var(--border);
-  position:sticky;top:68px;z-index:50;
-}
+.menu-search-bar{background:rgba(16,9,16,.98);padding:16px 28px;border-bottom:1px solid var(--border);position:sticky;top:68px;z-index:50;}
 .search-wrap{max-width:700px;margin:0 auto;position:relative;}
 .search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:16px;}
-.search-input{
-  width:100%;background:var(--glass);
-  border:1px solid var(--border);border-radius:13px;
-  padding:13px 14px 13px 44px;color:var(--cream);font-size:15px;
-}
+.search-input{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:13px;padding:13px 14px 13px 44px;color:var(--cream);font-size:15px;}
 .search-input:focus{outline:none;border-color:rgba(196,160,80,.5);}
 .search-input::placeholder{color:#5a4050;}
-
 .menu-layout{display:flex;max-width:1180px;margin:0 auto;padding-bottom:100px;}
-
-/* Sidebar */
-.cat-sidebar{
-  width:210px;flex-shrink:0;
-  padding:26px 16px;
-  position:sticky;top:140px;align-self:flex-start;
-}
-.cat-btn{
-  display:flex;align-items:center;gap:9px;
-  width:100%;background:none;
-  border:1px solid transparent;border-radius:10px;
-  padding:10px 13px;margin-bottom:4px;
-  color:var(--dim);font-size:13px;font-weight:400;
-  text-align:left;transition:all .2s;
-}
-.cat-btn.active,.cat-btn:hover{
-  background:linear-gradient(135deg,rgba(196,160,80,.14),rgba(139,69,19,.14));
-  border-color:rgba(196,160,80,.35);
-  color:var(--gold);font-weight:700;
-}
+.cat-sidebar{width:210px;flex-shrink:0;padding:26px 16px;position:sticky;top:140px;align-self:flex-start;}
+.cat-btn{display:flex;align-items:center;gap:9px;width:100%;background:none;border:1px solid transparent;border-radius:10px;padding:10px 13px;margin-bottom:4px;color:var(--dim);font-size:13px;font-weight:400;text-align:left;transition:all .2s;}
+.cat-btn.active,.cat-btn:hover{background:linear-gradient(135deg,rgba(196,160,80,.14),rgba(139,69,19,.14));border-color:rgba(196,160,80,.35);color:var(--gold);font-weight:700;}
 .cat-icon{font-size:17px;}
-
-/* Items column */
 .menu-items{flex:1;padding:26px 26px 0;}
 .cat-section{margin-bottom:54px;}
 .cat-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
 .cat-header-icon{font-size:30px;}
-.cat-header h2{
-  font-family:'Playfair Display',serif;
-  font-size:23px;font-weight:700;color:var(--gold);margin:0;
-}
+.cat-header h2{font-family:'Playfair Display',serif;font-size:23px;font-weight:700;color:var(--gold);margin:0;}
 .cat-rule{flex:1;height:1px;background:linear-gradient(90deg,rgba(196,160,80,.3),transparent);}
 
-/* ─── FLOAT CART BTN ─────────────────────── */
-#float-cart{
-  display:none;position:fixed;bottom:106px;left:50%;
-  transform:translateX(-50%);z-index:200;
-}
+/* FLOAT CART */
+#float-cart{display:none;position:fixed;bottom:106px;left:50%;transform:translateX(-50%);z-index:200;}
 #float-cart.show{display:block;}
-.float-cart-btn{
-  background:linear-gradient(135deg,var(--gold),#8b4513);
-  border:none;border-radius:30px;padding:14px 34px;
-  color:#fff;font-weight:700;font-size:16px;
-  box-shadow:0 8px 32px rgba(196,160,80,.42);
-  display:flex;align-items:center;gap:13px;
-  white-space:nowrap;
-  transition:transform .2s;
-}
+.float-cart-btn{background:linear-gradient(135deg,var(--gold),#8b4513);border:none;border-radius:30px;padding:14px 34px;color:#fff;font-weight:700;font-size:16px;box-shadow:0 8px 32px rgba(196,160,80,.42);display:flex;align-items:center;gap:13px;white-space:nowrap;transition:transform .2s;}
 .float-cart-btn:hover{transform:translateY(-3px);}
 
-/* ─── CART OVERLAY ───────────────────────── */
-#cart-overlay{
-  display:none;position:fixed;inset:0;z-index:600;
-}
+/* CART OVERLAY */
+#cart-overlay{display:none;position:fixed;inset:0;z-index:600;}
 #cart-overlay.open{display:flex;}
-.cart-backdrop{
-  flex:1;background:rgba(0,0,0,.72);
-  backdrop-filter:blur(4px);
-}
-.cart-panel{
-  width:min(430px,100vw);
-  background:#0f0810;
-  border-left:1px solid var(--border);
-  overflow-y:auto;padding:26px;
-  display:flex;flex-direction:column;
-}
+.cart-backdrop{flex:1;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);}
+.cart-panel{width:min(430px,100vw);background:#0f0810;border-left:1px solid var(--border);overflow-y:auto;padding:26px;display:flex;flex-direction:column;}
 .cart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;}
 .cart-title{font-family:'Playfair Display',serif;font-size:21px;color:var(--gold);}
 .close-btn{background:none;border:none;color:var(--dim);font-size:26px;line-height:1;}
 .cart-empty{text-align:center;color:var(--dim);padding:70px 0;}
 .cart-empty-icon{font-size:52px;margin-bottom:16px;}
-.cart-item{
-  display:flex;gap:13px;margin-bottom:15px;
-  padding:13px;background:var(--glass);
-  border:1px solid rgba(196,160,80,.09);border-radius:13px;
-}
+.cart-item{display:flex;gap:13px;margin-bottom:15px;padding:13px;background:var(--glass);border:1px solid rgba(196,160,80,.09);border-radius:13px;}
 .cart-item-img{width:62px;height:62px;border-radius:9px;object-fit:cover;flex-shrink:0;}
 .cart-item-info{flex:1;}
 .cart-item-name{font-size:13px;font-weight:600;color:#f0e0c0;margin-bottom:4px;line-height:1.3;}
@@ -477,75 +225,31 @@ img{display:block;}
 .cart-item-obs{color:var(--dim);font-size:11px;margin-top:3px;}
 .cart-item-ctrl{display:flex;flex-direction:column;align-items:center;gap:7px;}
 .qty-row{display:flex;align-items:center;gap:7px;}
-.qty-btn{
-  width:28px;height:28px;border-radius:50%;
-  background:rgba(196,160,80,.18);border:none;
-  color:var(--gold);font-size:17px;line-height:1;
-  transition:background .2s;
-}
+.qty-btn{width:28px;height:28px;border-radius:50%;background:rgba(196,160,80,.18);border:none;color:var(--gold);font-size:17px;line-height:1;transition:background .2s;}
 .qty-btn:hover{background:rgba(196,160,80,.3);}
 .qty-val{color:var(--cream);font-weight:700;font-size:14px;min-width:20px;text-align:center;}
 .del-btn{background:none;border:none;color:#7a2030;font-size:19px;}
-.cart-total-row{
-  display:flex;justify-content:space-between;
-  font-size:18px;font-weight:700;color:var(--gold);
-  padding-top:16px;border-top:1px solid var(--border);
-  margin-top:8px;margin-bottom:22px;
-}
+.cart-total-row{display:flex;justify-content:space-between;font-size:18px;font-weight:700;color:var(--gold);padding-top:16px;border-top:1px solid var(--border);margin-top:8px;margin-bottom:22px;}
 
-/* ─── CHECKOUT STEPS ─────────────────────── */
+/* CHECKOUT */
 .step{display:none;}
 .step.active{display:block;}
 .step-label{color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;}
-.field-input{
-  width:100%;background:var(--glass);
-  border:1px solid var(--border);border-radius:11px;
-  padding:13px 15px;color:var(--cream);font-size:14px;
-  margin-bottom:18px;
-  transition:border-color .2s;
-}
+.field-input{width:100%;background:var(--glass);border:1px solid var(--border);border-radius:11px;padding:13px 15px;color:var(--cream);font-size:14px;margin-bottom:18px;transition:border-color .2s;}
 .field-input:focus{outline:none;border-color:rgba(196,160,80,.5);}
 .field-input::placeholder{color:#5a4050;}
 .type-row{display:flex;gap:13px;margin-bottom:22px;}
-.type-btn{
-  flex:1;padding:13px 9px;border-radius:11px;
-  border:2px solid var(--border);
-  background:transparent;color:var(--dim);
-  font-size:13px;font-weight:600;
-  transition:all .2s;text-align:center;
-}
+.type-btn{flex:1;padding:13px 9px;border-radius:11px;border:2px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-weight:600;transition:all .2s;text-align:center;}
 .type-btn.sel{border-color:var(--gold);background:rgba(196,160,80,.13);color:var(--gold);}
-.pay-opt{
-  display:block;padding:14px 18px;border-radius:12px;
-  border:2px solid var(--border);
-  background:rgba(255,255,255,.02);
-  color:var(--dim);font-size:15px;font-weight:700;
-  margin-bottom:11px;text-align:left;
-  transition:all .2s;
-}
+.pay-opt{display:block;padding:14px 18px;border-radius:12px;border:2px solid var(--border);background:rgba(255,255,255,.02);color:var(--dim);font-size:15px;font-weight:700;margin-bottom:11px;text-align:left;transition:all .2s;width:100%;}
 .pay-opt.sel{border-color:var(--gold);background:rgba(196,160,80,.13);color:var(--gold);}
-.order-summary{
-  background:rgba(196,160,80,.07);
-  border:1px solid var(--border);border-radius:13px;
-  padding:18px;margin-bottom:22px;
-}
+.order-summary{background:rgba(196,160,80,.07);border:1px solid var(--border);border-radius:13px;padding:18px;margin-bottom:22px;}
 .summary-title{color:var(--dim);font-size:13px;margin-bottom:12px;}
-.summary-line{
-  display:flex;justify-content:space-between;
-  font-size:13px;color:var(--muted);margin-bottom:5px;
-}
-.summary-total{
-  display:flex;justify-content:space-between;
-  font-weight:700;color:var(--gold);font-size:16px;
-  padding-top:10px;border-top:1px solid var(--border);margin-top:8px;
-}
+.summary-line{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:5px;}
+.summary-total{display:flex;justify-content:space-between;font-weight:700;color:var(--gold);font-size:16px;padding-top:10px;border-top:1px solid var(--border);margin-top:8px;}
 
-/* ─── SUCCESS PAGE ───────────────────────── */
-#success-page{
-  display:none;min-height:100vh;
-  align-items:center;justify-content:center;
-  padding:28px;text-align:center;
-}
+/* SUCCESS */
+#success-page{display:none;min-height:100vh;align-items:center;justify-content:center;padding:28px;text-align:center;}
 #success-page.show{display:flex;}
 .success-icon{font-size:80px;margin-bottom:26px;animation:pop .6s ease-out;}
 @keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
@@ -553,49 +257,26 @@ img{display:block;}
 .success-p{color:var(--muted);font-size:17px;max-width:380px;margin:0 auto 10px;line-height:1.7;}
 .success-eta{color:var(--dim);font-size:14px;margin-bottom:34px;}
 
-/* ─── ABOUT PAGE ─────────────────────────── */
+/* ABOUT PAGE */
 #about-page{padding-top:68px;}
-.about-hero{
-  position:relative;padding:130px 28px 90px;text-align:center;
-}
-.about-hero-bg{
-  position:absolute;inset:0;
-  background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1300&q=80');
-  background-size:cover;background-position:center;
-  filter:brightness(.22);
-}
+.about-hero{position:relative;padding:130px 28px 90px;text-align:center;}
+.about-hero-bg{position:absolute;inset:0;background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1300&q=80');background-size:cover;background-position:center;filter:brightness(.22);}
 .about-hero-ov{position:absolute;inset:0;background:rgba(8,5,8,.55);}
 .about-hero-inner{position:relative;}
 .about-h1{font-family:'Playfair Display',serif;font-size:clamp(38px,9vw,78px);font-weight:900;color:var(--cream);}
 .about-h1 span{color:var(--gold);}
 .about-content{max-width:820px;margin:0 auto;padding:66px 28px;}
 .story-block{display:flex;gap:26px;margin-bottom:52px;align-items:flex-start;}
-.story-icon{
-  width:58px;height:58px;border-radius:50%;flex-shrink:0;
-  background:linear-gradient(135deg,rgba(196,160,80,.18),rgba(139,69,19,.18));
-  border:2px solid rgba(196,160,80,.28);
-  display:flex;align-items:center;justify-content:center;font-size:26px;
-}
+.story-icon{width:58px;height:58px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,rgba(196,160,80,.18),rgba(139,69,19,.18));border:2px solid rgba(196,160,80,.28);display:flex;align-items:center;justify-content:center;font-size:26px;}
 .story-h3{font-family:'Playfair Display',serif;font-size:21px;color:var(--gold);margin-bottom:11px;}
-.story-p{
-  font-family:'Cormorant Garamond',serif;
-  color:var(--muted);line-height:1.85;font-size:17px;
-}
+.story-p{font-family:'Cormorant Garamond',serif;color:var(--muted);line-height:1.85;font-size:17px;}
 .about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:44px;}
-.about-stat{
-  text-align:center;
-  background:rgba(40,18,28,.6);
-  border:1px solid var(--border);border-radius:16px;padding:26px;
-}
+.about-stat{text-align:center;background:rgba(40,18,28,.6);border:1px solid var(--border);border-radius:16px;padding:26px;}
 .about-stat-num{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:900;}
 .about-stat-lbl{color:var(--dim);font-size:13px;margin-top:5px;}
 
-/* ─── FOOTER ──────────────────────────────── */
-footer{
-  background:#040204;
-  border-top:1px solid var(--border);
-  padding:44px 28px;text-align:center;
-}
+/* FOOTER */
+footer{background:#040204;border-top:1px solid var(--border);padding:44px 28px;text-align:center;}
 .footer-logo{font-family:'Playfair Display',serif;font-size:30px;color:var(--gold);font-weight:900;}
 .footer-tagline{font-size:11px;color:var(--dim);letter-spacing:.3em;text-transform:uppercase;margin:4px 0 26px;}
 .footer-links{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:26px;font-size:13px;color:var(--dim);}
@@ -603,42 +284,39 @@ footer{
 .footer-links a:hover{opacity:.75;}
 .footer-copy{font-size:12px;color:#3a2838;}
 
-/* ─── WA FLOAT ────────────────────────────── */
-#wa-float{
-  position:fixed;bottom:26px;right:26px;z-index:700;
-  width:62px;height:62px;border-radius:50%;
-  background:linear-gradient(135deg,#25d366,#128c7e);
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 22px rgba(37,211,102,.5);
-  animation:waPulse 2.2s ease-in-out infinite;
-  transition:transform .2s;
-}
+/* WA FLOAT */
+#wa-float{position:fixed;bottom:26px;right:26px;z-index:700;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 22px rgba(37,211,102,.5);animation:waPulse 2.2s ease-in-out infinite;transition:transform .2s;}
 #wa-float:hover{transform:scale(1.1);}
 @keyframes waPulse{0%,100%{box-shadow:0 4px 22px rgba(37,211,102,.5);}50%{box-shadow:0 4px 42px rgba(37,211,102,.85);}}
 
-/* ─── SCROLL ANIMATIONS ──────────────────── */
+/* DEMO BADGE — discreto, canto inferior esquerdo */
+#demo-badge{
+  position:fixed;bottom:26px;left:26px;z-index:700;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(10,6,10,0.78);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(196,160,80,0.2);
+  border-radius:20px;padding:7px 15px 7px 11px;
+  font-size:11px;color:rgba(196,160,80,0.65);
+  letter-spacing:.07em;pointer-events:none;user-select:none;
+  font-family:'DM Sans',sans-serif;font-weight:400;
+}
+.demo-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);opacity:.65;flex-shrink:0;
+  animation:demoBlink 2.8s ease-in-out infinite;
+}
+@keyframes demoBlink{0%,100%{opacity:.65;}50%{opacity:.2;}}
+
+/* SCROLL REVEAL */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
 .reveal.shown{opacity:1;transform:translateY(0);}
 
-/* ─── RESPONSIVE ─────────────────────────── */
-@media(max-width:768px){
-  .cat-sidebar{display:none;}
-  .menu-items{padding:18px 16px 0;}
-  .type-row{flex-direction:column;}
-  .about-stats{grid-template-columns:repeat(3,1fr);}
-  .story-block{flex-direction:column;}
-}
-@media(max-width:480px){
-  .hero-btns{flex-direction:column;align-items:center;}
-  .info-bar-inner{gap:18px;}
-  .grid-4{grid-template-columns:1fr 1fr;}
-  .card-img-wrap{height:150px;}
-  .about-stats{grid-template-columns:repeat(3,1fr);}
-  .hero-stats{gap:24px;}
-}
-@media(max-width:360px){
-  .grid-4{grid-template-columns:1fr;}
-}
+/* RESPONSIVE */
+@media(max-width:768px){.cat-sidebar{display:none;}.menu-items{padding:18px 16px 0;}.type-row{flex-direction:column;}}
+@media(max-width:480px){.hero-btns{flex-direction:column;align-items:center;}.grid-4{grid-template-columns:1fr 1fr;}.card-img-wrap{height:150px;}.hero-stats{gap:24px;}#demo-badge{font-size:10px;padding:6px 12px 6px 9px;}}
+@media(max-width:360px){.grid-4{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -655,10 +333,7 @@ footer{
 <nav id="navbar">
   <div class="nav-brand" onclick="showPage('home')">
     <div class="nav-icon">🍽️</div>
-    <div>
-      <div class="nav-name">Donana</div>
-      <div class="nav-tagline">Gourmet</div>
-    </div>
+    <div><div class="nav-name">Donana</div><div class="nav-tagline">Gourmet</div></div>
   </div>
   <div class="nav-links">
     <button class="nav-link active" id="nl-home" onclick="showPage('home')">Início</button>
@@ -666,9 +341,7 @@ footer{
     <button class="nav-link" id="nl-about" onclick="showPage('about')">Sobre</button>
     <button class="nav-cart" id="nav-cart-btn" onclick="openCart()">🛒 <span id="nav-cart-count" class="cart-badge" style="display:none">0</span></button>
   </div>
-  <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
-    <span></span><span></span><span></span>
-  </button>
+  <button class="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
 </nav>
 
 <!-- MOBILE MENU -->
@@ -680,17 +353,12 @@ footer{
   <button onclick="toggleMobileMenu()" style="position:absolute;top:24px;right:28px;background:none;border:none;color:var(--dim);font-size:30px;">✕</button>
 </div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- HOME PAGE                                   -->
-<!-- ═══════════════════════════════════════════ -->
+<!-- HOME PAGE -->
 <div class="page active" id="home-page">
-
-  <!-- HERO -->
   <section id="hero">
     <div class="hero-bg"></div>
     <div class="hero-overlay"></div>
-    <div class="hero-line top"></div>
-    <div class="hero-line bot"></div>
+    <div class="hero-line top"></div><div class="hero-line bot"></div>
     <div class="hero-content" id="hero-content">
       <div class="hero-badge">✦ Fortaleza — CE ✦</div>
       <h1 class="hero-h1">
@@ -712,23 +380,14 @@ footer{
     <div class="scroll-hint">↓</div>
   </section>
 
-  <!-- SPECIALS -->
   <section id="specials">
-    <div class="sec-title reveal">
-      <div class="sec-sup">✦ Mais Pedidos ✦</div>
-      <h2 class="sec-h2">Especiais da Casa</h2>
-      <div class="sec-rule"></div>
-    </div>
+    <div class="sec-title reveal"><div class="sec-sup">✦ Mais Pedidos ✦</div><h2 class="sec-h2">Especiais da Casa</h2><div class="sec-rule"></div></div>
     <div class="grid-4" id="home-specials-grid"></div>
-    <div style="text-align:center;margin-top:44px;" class="reveal">
-      <button class="btn-gold" onclick="showPage('menu')">Ver Cardápio Completo →</button>
-    </div>
+    <div style="text-align:center;margin-top:44px;" class="reveal"><button class="btn-gold" onclick="showPage('menu')">Ver Cardápio Completo →</button></div>
   </section>
 
-  <!-- PROMO BANNER -->
   <section id="promo-banner">
-    <div class="promo-bg"></div>
-    <div class="promo-ov"></div>
+    <div class="promo-bg"></div><div class="promo-ov"></div>
     <div class="promo-inner reveal">
       <div class="promo-sup">✦ Delivery Premium ✦</div>
       <h2 class="promo-h2">Peça Online Sem<br><span>Sair de Casa</span></h2>
@@ -737,79 +396,38 @@ footer{
     </div>
   </section>
 
-  <!-- REVIEWS -->
   <section id="reviews">
-    <div class="sec-title reveal">
-      <div class="sec-sup">✦ Depoimentos ✦</div>
-      <h2 class="sec-h2">O que dizem nossos clientes</h2>
-      <div class="sec-rule"></div>
-    </div>
+    <div class="sec-title reveal"><div class="sec-sup">✦ Depoimentos ✦</div><h2 class="sec-h2">O que dizem nossos clientes</h2><div class="sec-rule"></div></div>
     <div class="grid-reviews">
-      <div class="review-card reveal">
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">"Melhor restaurante de Fortaleza! O filé na manteiga é simplesmente divino. Já virei cliente fiel!"</p>
-        <div class="review-author"><div class="review-avatar">MC</div><span class="review-name">Mariana Costa</span></div>
-      </div>
-      <div class="review-card reveal" style="transition-delay:.1s">
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">"Experiência gastronômica incrível. O Arroz de Camarão é sensacional. Super recomendo para toda a família!"</p>
-        <div class="review-author"><div class="review-avatar">RO</div><span class="review-name">Rafael Oliveira</span></div>
-      </div>
-      <div class="review-card reveal" style="transition-delay:.2s">
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">"A Carne de Sol aos 4 queijos é um espetáculo! Atendimento impecável e entrega rápida. Nota 10!"</p>
-        <div class="review-author"><div class="review-avatar">JM</div><span class="review-name">Juliana Mendes</span></div>
-      </div>
-      <div class="review-card reveal" style="transition-delay:.3s">
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">"Voltei mais 3 vezes essa semana. A qualidade é constante e o sabor é único. Recomendo demais!"</p>
-        <div class="review-author"><div class="review-avatar">CS</div><span class="review-name">Carlos Souza</span></div>
-      </div>
+      <div class="review-card reveal"><div class="review-stars">★★★★★</div><p class="review-text">"Melhor restaurante de Fortaleza! O filé na manteiga é simplesmente divino. Já virei cliente fiel!"</p><div class="review-author"><div class="review-avatar">MC</div><span class="review-name">Mariana Costa</span></div></div>
+      <div class="review-card reveal" style="transition-delay:.1s"><div class="review-stars">★★★★★</div><p class="review-text">"Experiência gastronômica incrível. O Arroz de Camarão é sensacional. Super recomendo para toda a família!"</p><div class="review-author"><div class="review-avatar">RO</div><span class="review-name">Rafael Oliveira</span></div></div>
+      <div class="review-card reveal" style="transition-delay:.2s"><div class="review-stars">★★★★★</div><p class="review-text">"A Carne de Sol aos 4 queijos é um espetáculo! Atendimento impecável e entrega rápida. Nota 10!"</p><div class="review-author"><div class="review-avatar">JM</div><span class="review-name">Juliana Mendes</span></div></div>
+      <div class="review-card reveal" style="transition-delay:.3s"><div class="review-stars">★★★★★</div><p class="review-text">"Voltei mais 3 vezes essa semana. A qualidade é constante e o sabor é único. Recomendo demais!"</p><div class="review-author"><div class="review-avatar">CS</div><span class="review-name">Carlos Souza</span></div></div>
     </div>
   </section>
 
-  <!-- INFO BAR -->
-  <div id="info-bar">
-    <div class="info-bar-inner">
-      <div class="info-item"><div class="info-icon">📍</div><div class="info-text">Av. Heróis do Acre, 716 – Passaré</div></div>
-      <div class="info-item"><div class="info-icon">📞</div><div class="info-text">(85) 98530-2803</div></div>
-      <div class="info-item"><div class="info-icon">🕐</div><div class="info-text">Aberto até as 23h</div></div>
-      <div class="info-item"><div class="info-icon">📸</div><div class="info-text">@donanagourmett</div></div>
-    </div>
-  </div>
+  <div id="info-bar"><div class="info-bar-inner">
+    <div class="info-item"><div class="info-icon">📍</div><div class="info-text">Av. Heróis do Acre, 716 – Passaré</div></div>
+    <div class="info-item"><div class="info-icon">📞</div><div class="info-text">(85) 98530-2803</div></div>
+    <div class="info-item"><div class="info-icon">🕐</div><div class="info-text">Aberto até as 23h</div></div>
+    <div class="info-item"><div class="info-icon">📸</div><div class="info-text">@donanagourmett</div></div>
+  </div></div>
 
-  <!-- MAP -->
   <section id="map-section">
-    <div class="sec-title reveal">
-      <div class="sec-sup">✦ Localização ✦</div>
-      <h2 class="sec-h2">Como Chegar</h2>
-      <div class="sec-rule"></div>
-    </div>
-    <div class="map-wrap reveal">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3981.385!2d-38.5285!3d-3.8085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7c748e3b3cf3c5f%3A0x0!2zQXYuIEhlcsOzaXMgZG8gQWNyZSwgNzE2IC0gUGFzc2Fyw6ksIEZvcnRhbGV6YSAtIENF!5e0!3m2!1spt-BR!2sbr!4v1700000000000"
-        allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Donana Gourmet">
-      </iframe>
-    </div>
+    <div class="sec-title reveal"><div class="sec-sup">✦ Localização ✦</div><h2 class="sec-h2">Como Chegar</h2><div class="sec-rule"></div></div>
+    <div class="map-wrap reveal"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3981.385!2d-38.5285!3d-3.8085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM8KwNDgnMzAuNiJTIDM4wrAzMScxMC4yIlc!5e0!3m2!1spt-BR!2sbr!4v1700000000000" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Donana Gourmet"></iframe></div>
     <p class="map-addr">📍 Av. Heróis do Acre, 716 – Loja 1 e 2 – Passaré, Fortaleza – CE</p>
   </section>
 
   <footer>
     <div class="footer-logo">Donana Gourmet</div>
     <div class="footer-tagline">Fortaleza — CE</div>
-    <div class="footer-links">
-      <span>📍 Av. Heróis do Acre, 716 – Passaré</span>
-      <span>📞 (85) 98530-2803</span>
-      <span>🕐 Até 23h</span>
-      <a href="https://instagram.com/donanagourmett" target="_blank">📸 @donanagourmett</a>
-    </div>
+    <div class="footer-links"><span>📍 Av. Heróis do Acre, 716 – Passaré</span><span>📞 (85) 98530-2803</span><span>🕐 Até 23h</span><a href="https://instagram.com/donanagourmett" target="_blank">📸 @donanagourmett</a></div>
     <div class="footer-copy">© 2025 Donana Gourmet. Todos os direitos reservados.</div>
   </footer>
-</div><!-- /home-page -->
+</div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- MENU PAGE                                   -->
-<!-- ═══════════════════════════════════════════ -->
+<!-- MENU PAGE -->
 <div class="page" id="menu-page">
   <div class="menu-search-bar">
     <div class="search-wrap">
@@ -818,153 +436,70 @@ footer{
     </div>
   </div>
   <div class="menu-layout">
-    <!-- Sidebar -->
     <div class="cat-sidebar" id="cat-sidebar"></div>
-    <!-- Items -->
     <div class="menu-items" id="menu-items-col"></div>
   </div>
-
-  <footer>
-    <div class="footer-logo">Donana Gourmet</div>
-    <div class="footer-tagline">Fortaleza — CE</div>
-    <div class="footer-links">
-      <span>📍 Av. Heróis do Acre, 716 – Passaré</span>
-      <span>📞 (85) 98530-2803</span>
-    </div>
-    <div class="footer-copy">© 2025 Donana Gourmet. Todos os direitos reservados.</div>
-  </footer>
+  <footer><div class="footer-logo">Donana Gourmet</div><div class="footer-tagline">Fortaleza — CE</div><div class="footer-links"><span>📍 Av. Heróis do Acre, 716 – Passaré</span><span>📞 (85) 98530-2803</span></div><div class="footer-copy">© 2025 Donana Gourmet.</div></footer>
 </div>
 
-<!-- Float cart btn -->
-<div id="float-cart">
-  <button class="float-cart-btn" onclick="openCart()">
-    🛒 <span id="float-cart-label">Ver Carrinho (0) · R$0,00</span>
-  </button>
-</div>
+<!-- FLOAT CART -->
+<div id="float-cart"><button class="float-cart-btn" onclick="openCart()">🛒 <span id="float-cart-label">Ver Carrinho (0) · R$0,00</span></button></div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- ABOUT PAGE                                  -->
-<!-- ═══════════════════════════════════════════ -->
+<!-- ABOUT PAGE -->
 <div class="page" id="about-page">
   <section class="about-hero">
-    <div class="about-hero-bg"></div>
-    <div class="about-hero-ov"></div>
-    <div class="about-hero-inner">
-      <div class="sec-sup" style="margin-bottom:14px">✦ Nossa História ✦</div>
-      <h1 class="about-h1">Donana <span>Gourmet</span></h1>
-    </div>
+    <div class="about-hero-bg"></div><div class="about-hero-ov"></div>
+    <div class="about-hero-inner"><div class="sec-sup" style="margin-bottom:14px">✦ Nossa História ✦</div><h1 class="about-h1">Donana <span>Gourmet</span></h1></div>
   </section>
   <div class="about-content">
-    <div class="story-block reveal">
-      <div class="story-icon">🌟</div>
-      <div>
-        <h3 class="story-h3">Nossa Origem</h3>
-        <p class="story-p">A Donana Gourmet nasceu da paixão pela culinária brasileira e da vontade de oferecer pratos preparados com carinho, ingredientes selecionados e sabor inesquecível.</p>
-      </div>
-    </div>
-    <div class="story-block reveal">
-      <div class="story-icon">📈</div>
-      <div>
-        <h3 class="story-h3">Nossa Trajetória</h3>
-        <p class="story-p">Com o passar dos anos, tornou-se referência em Fortaleza por unir qualidade, atendimento acolhedor e um cardápio variado com pratos especiais, massas, risotos, petiscos e refeições artesanais.</p>
-      </div>
-    </div>
-    <div class="story-block reveal">
-      <div class="story-icon">✨</div>
-      <div>
-        <h3 class="story-h3">Nossa Missão</h3>
-        <p class="story-p">Hoje a Donana Gourmet entrega uma experiência gastronômica sofisticada, moderna e acolhedora — para quem aprecia o melhor da culinária com o calor genuíno do nordeste.</p>
-      </div>
-    </div>
+    <div class="story-block reveal"><div class="story-icon">🌟</div><div><h3 class="story-h3">Nossa Origem</h3><p class="story-p">A Donana Gourmet nasceu da paixão pela culinária brasileira e da vontade de oferecer pratos preparados com carinho, ingredientes selecionados e sabor inesquecível.</p></div></div>
+    <div class="story-block reveal"><div class="story-icon">📈</div><div><h3 class="story-h3">Nossa Trajetória</h3><p class="story-p">Com o passar dos anos, tornou-se referência em Fortaleza por unir qualidade, atendimento acolhedor e um cardápio variado com pratos especiais, massas, risotos, petiscos e refeições artesanais.</p></div></div>
+    <div class="story-block reveal"><div class="story-icon">✨</div><div><h3 class="story-h3">Nossa Missão</h3><p class="story-p">Hoje a Donana Gourmet entrega uma experiência gastronômica sofisticada, moderna e acolhedora — para quem aprecia o melhor da culinária com o calor genuíno do nordeste.</p></div></div>
     <div class="about-stats reveal">
       <div class="about-stat"><div class="about-stat-num">100+</div><div class="about-stat-lbl">Itens no Cardápio</div></div>
       <div class="about-stat"><div class="about-stat-num">4.9★</div><div class="about-stat-lbl">Avaliação Média</div></div>
       <div class="about-stat"><div class="about-stat-num">5+</div><div class="about-stat-lbl">Anos no Mercado</div></div>
     </div>
   </div>
-  <footer>
-    <div class="footer-logo">Donana Gourmet</div>
-    <div class="footer-tagline">Fortaleza — CE</div>
-    <div class="footer-links">
-      <span>📍 Av. Heróis do Acre, 716 – Passaré</span>
-      <span>📞 (85) 98530-2803</span>
-      <span>🕐 Até 23h</span>
-      <a href="https://instagram.com/donanagourmett" target="_blank">📸 @donanagourmett</a>
-    </div>
-    <div class="footer-copy">© 2025 Donana Gourmet. Todos os direitos reservados.</div>
-  </footer>
+  <footer><div class="footer-logo">Donana Gourmet</div><div class="footer-tagline">Fortaleza — CE</div><div class="footer-links"><span>📍 Av. Heróis do Acre, 716 – Passaré</span><span>📞 (85) 98530-2803</span><span>🕐 Até 23h</span><a href="https://instagram.com/donanagourmett" target="_blank">📸 @donanagourmett</a></div><div class="footer-copy">© 2025 Donana Gourmet. Todos os direitos reservados.</div></footer>
 </div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- SUCCESS PAGE                                -->
-<!-- ═══════════════════════════════════════════ -->
+<!-- SUCCESS PAGE -->
 <div id="success-page">
-  <div>
-    <div class="success-icon">🎉</div>
-    <h1 class="success-h1">Pedido Enviado!</h1>
-    <p class="success-p">Seu pedido foi encaminhado para o WhatsApp da Donana Gourmet. Em breve entraremos em contato.</p>
-    <p class="success-eta">⏱ Tempo estimado: 30 – 45 minutos</p>
-    <button class="btn-gold" onclick="resetOrder()">← Fazer Novo Pedido</button>
-  </div>
+  <div><div class="success-icon">🎉</div><h1 class="success-h1">Pedido Enviado!</h1><p class="success-p">Seu pedido foi encaminhado para o WhatsApp da Donana Gourmet. Em breve entraremos em contato.</p><p class="success-eta">⏱ Tempo estimado: 30 – 45 minutos</p><button class="btn-gold" onclick="resetOrder()">← Fazer Novo Pedido</button></div>
 </div>
 
-<!-- ═══════════════════════════════════════════ -->
-<!-- CART OVERLAY                                -->
-<!-- ═══════════════════════════════════════════ -->
+<!-- CART OVERLAY -->
 <div id="cart-overlay">
   <div class="cart-backdrop" onclick="closeCart()"></div>
   <div class="cart-panel">
-    <!-- STEP 0: CART -->
     <div class="step active" id="step-cart">
-      <div class="cart-header">
-        <div class="cart-title">🛒 Seu Carrinho</div>
-        <button class="close-btn" onclick="closeCart()">✕</button>
-      </div>
+      <div class="cart-header"><div class="cart-title">🛒 Seu Carrinho</div><button class="close-btn" onclick="closeCart()">✕</button></div>
       <div id="cart-items-list"></div>
       <div id="cart-actions" style="display:none">
-        <div class="cart-total-row">
-          <span>Total:</span><span id="cart-total-val">R$0,00</span>
-        </div>
+        <div class="cart-total-row"><span>Total:</span><span id="cart-total-val">R$0,00</span></div>
         <button class="btn-gold" style="width:100%;justify-content:center" onclick="goStep(1)">Finalizar Pedido →</button>
       </div>
     </div>
-
-    <!-- STEP 1: DELIVERY INFO -->
     <div class="step" id="step-delivery">
-      <div class="cart-header">
-        <div class="cart-title">📦 Informações</div>
-        <button class="close-btn" onclick="closeCart()">✕</button>
-      </div>
-      <div class="step-label">Nome completo</div>
-      <input class="field-input" id="f-name" type="text" placeholder="Seu nome completo">
-      <div class="step-label">Telefone</div>
-      <input class="field-input" id="f-phone" type="tel" placeholder="(85) 99999-9999">
+      <div class="cart-header"><div class="cart-title">📦 Informações</div><button class="close-btn" onclick="closeCart()">✕</button></div>
+      <div class="step-label">Nome completo</div><input class="field-input" id="f-name" type="text" placeholder="Seu nome completo">
+      <div class="step-label">Telefone</div><input class="field-input" id="f-phone" type="tel" placeholder="(85) 99999-9999">
       <div class="step-label">Tipo de pedido</div>
       <div class="type-row">
         <button class="type-btn sel" id="t-entrega" onclick="selectType('entrega')">🚀 Entrega</button>
         <button class="type-btn" id="t-retirada" onclick="selectType('retirada')">🏪 Retirar na Loja</button>
       </div>
-      <div id="addr-wrap">
-        <div class="step-label">Endereço de entrega</div>
-        <input class="field-input" id="f-address" type="text" placeholder="Rua, número, bairro…">
-      </div>
+      <div id="addr-wrap"><div class="step-label">Endereço de entrega</div><input class="field-input" id="f-address" type="text" placeholder="Rua, número, bairro…"></div>
       <button class="btn-gold" style="width:100%;justify-content:center;margin-top:6px" onclick="goStep(2)">Continuar → Pagamento</button>
       <button onclick="goStep(0)" style="width:100%;background:none;border:none;color:var(--dim);margin-top:14px;font-size:13px">← Voltar ao carrinho</button>
     </div>
-
-    <!-- STEP 2: PAYMENT -->
     <div class="step" id="step-payment">
-      <div class="cart-header">
-        <div class="cart-title">💳 Pagamento</div>
-        <button class="close-btn" onclick="closeCart()">✕</button>
-      </div>
+      <div class="cart-header"><div class="cart-title">💳 Pagamento</div><button class="close-btn" onclick="closeCart()">✕</button></div>
       <button class="pay-opt sel" id="p-pix" onclick="selectPay('pix')">💰 Pix</button>
       <button class="pay-opt" id="p-cartao" onclick="selectPay('cartao')">💳 Cartão</button>
       <button class="pay-opt" id="p-dinheiro" onclick="selectPay('dinheiro')">💵 Dinheiro</button>
-      <div id="troco-wrap" style="display:none;margin-top:4px">
-        <div class="step-label">Troco para quanto? (R$)</div>
-        <input class="field-input" id="f-troco" type="number" placeholder="Ex: 100">
-      </div>
+      <div id="troco-wrap" style="display:none;margin-top:4px"><div class="step-label">Troco para quanto? (R$)</div><input class="field-input" id="f-troco" type="number" placeholder="Ex: 100"></div>
       <div class="order-summary" id="order-summary"></div>
       <button class="btn-green" onclick="sendOrder()">📲 Enviar Pedido via WhatsApp</button>
       <button onclick="goStep(1)" style="width:100%;background:none;border:none;color:var(--dim);margin-top:14px;font-size:13px">← Voltar</button>
@@ -974,242 +509,214 @@ footer{
 
 <!-- WhatsApp Float -->
 <a id="wa-float" href="https://wa.me/5585985302803?text=Ol%C3%A1%2C%20vim%20atrav%C3%A9s%20do%20site%20da%20Donana%20Gourmet%20e%20gostaria%20de%20fazer%20um%20pedido." target="_blank" title="Falar no WhatsApp">
-  <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
+<!-- DEMO BADGE -->
+<div id="demo-badge">
+  <span class="demo-dot"></span>
+  Versão demonstrativa
+</div>
+
 <script>
-/* ═══════════════════════════════════════════════
-   DATA
-═══════════════════════════════════════════════ */
+/* =============================================
+   MENU DATA — imagem única e premium por item
+============================================= */
 var MENU = {
-  "Especiais da Casa":{icon:"⭐",img:"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&q=80",items:[
-    {id:1,name:"Filé salteado na manteiga com fritas",price:47.90,desc:"Filé mignon suculento, salteado na manteiga com ervas finas, acompanhado de fritas crocantes.",img:"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&q=80"},
-    {id:2,name:"Tábua Sertaneja",price:49.90,desc:"Tábua farta com carne de sol, queijo coalho, macaxeira, charque e vinagrete.",img:"https://images.unsplash.com/photo-1544025162-d76594f0c7e1?w=400&q=80"},
-    {id:3,name:"Maminha grelhada na manteiga com batatas sauté",price:49.90,desc:"Maminha grelhada no ponto perfeito, na manteiga temperada, com batatas sauté douradas.",img:"https://images.unsplash.com/photo-1558030006-450675393462?w=400&q=80"},
-    {id:4,name:"Carne de sol e queijo coalho na redução de rapadura",price:69.90,desc:"Carne de sol premium com queijo coalho grelhado em irresistível redução de rapadura.",img:"https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&q=80"},
-    {id:5,name:"Carne de sol aos 4 queijos",price:73.90,desc:"Carne de sol desfiada envolta em cremoso molho de quatro queijos selecionados.",img:"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80"},
-    {id:6,name:"Arroz de Camarão Cremoso",price:32.90,desc:"Arroz cremoso com camarões frescos, legumes e toque especial da casa.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"},
-    {id:7,name:"Massa Frutos do Mar",price:39.90,desc:"Massa artesanal com mix de frutos do mar em molho ao sugo com ervas frescas.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"}
-  ]},
-  "Risotos":{icon:"🍚",items:[
-    {id:10,name:"Frango com Bacon",price:23.90,desc:"Risoto cremoso de frango grelhado com bacon crocante e parmesão.",img:"https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=80"},
-    {id:11,name:"Carne de sol com calabresa",price:24.90,desc:"Risoto nordestino com carne de sol e calabresa defumada.",img:"https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=80"},
-    {id:12,name:"Filé",price:29.90,desc:"Risoto sofisticado com medalhões de filé mignon e parmesão aged.",img:"https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=400&q=80"}
-  ]},
-  "Massas e Molhos":{icon:"🍝",items:[
-    {id:20,name:"Frango com queijo",price:24.90,desc:"Massa artesanal com frango grelhado e queijo derretido.",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&q=80"},
-    {id:21,name:"Calabresa e bacon defumado",price:24.90,desc:"Massa com calabresa ao molho e bacon defumado artesanal.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"},
-    {id:22,name:"Carbonara",price:25.90,desc:"Clássica italiana com ovos, parmesão, pancetta e pimenta negra.",img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&q=80"},
-    {id:23,name:"Bolonhesa",price:26.90,desc:"Ragù de carne moída ao molho de tomate fresco com ervas.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"},
-    {id:24,name:"Nordestino",price:27.90,desc:"Massa especial com carne de sol, queijo coalho e manteiga de garrafa.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"},
-    {id:25,name:"Filé",price:32.90,desc:"Massa premium com tiras de filé mignon ao molho especial da casa.",img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80"},
-    {id:26,name:"Camarão cremoso",price:32.90,desc:"Massa ao molho cremoso com camarões frescos e especiarias.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"},
-    {id:27,name:"Camarão com bacon",price:34.90,desc:"Camarões grelhados com bacon crocante ao molho da casa.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"}
-  ]},
-  "Pastéis":{icon:"🥟",items:[
-    {id:30,name:"Queijo",price:9.90,desc:"Pastel crocante recheado com queijo derretido.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:31,name:"Misto",price:9.90,desc:"Presunto e queijo no ponto certo.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:32,name:"Pizza",price:10.90,desc:"Molho de tomate, queijo e pepperoni.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:33,name:"Frango",price:9.90,desc:"Frango desfiado temperado.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:34,name:"Frango com bacon",price:10.90,desc:"Frango e bacon crocante.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:35,name:"Frango com queijo",price:10.90,desc:"Frango cremoso com queijo.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:36,name:"Carne com queijo",price:11.90,desc:"Carne moída temperada com queijo.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:37,name:"Carne de sol com queijo",price:13.90,desc:"Carne de sol premium com queijo coalho.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:38,name:"Tudão",price:14.90,desc:"Tudo dentro: frango, carne, queijo e bacon!",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:39,name:"Chocolate",price:16.90,desc:"Recheio de chocolate cremoso. Uma tentação!",img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80"}
-  ]},
-  "Omeletes":{icon:"🍳",items:[
-    {id:40,name:"Frango com queijo",price:14.90,desc:"Omelete fofinho com frango e queijo derretido.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"},
-    {id:41,name:"Frango com bacon",price:14.90,desc:"Frango suculento e bacon crocante.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"},
-    {id:42,name:"Calabresa com queijo",price:14.90,desc:"Calabresa temperada com queijo fundido.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"},
-    {id:43,name:"Presunto e queijo",price:14.90,desc:"Clássico e irresistível.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"},
-    {id:44,name:"Legumes",price:15.90,desc:"Omelete nutritivo com legumes frescos.",img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=400&q=80"}
-  ]},
-  "Petiscos":{icon:"🍟",items:[
-    {id:50,name:"Batata frita",price:17.90,desc:"Batatas crocantes douradas na medida certa.",img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80"},
-    {id:51,name:"Batata frita com parmesão",price:18.90,desc:"Batatas fritas com parmesão ralado e ervas.",img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80"},
-    {id:52,name:"Batata com cheddar e bacon",price:18.90,desc:"Batatas cobertas com cheddar cremoso e bacon.",img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80"},
-    {id:53,name:"Isca de peixe",price:18.90,desc:"Iscas de peixe empanadas, crocantes e saborosas.",img:"https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400&q=80"},
-    {id:54,name:"Bolinha de queijo",price:18.90,desc:"Bolinhas crocantes com queijo derretido por dentro.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:55,name:"Bolinha de carne do sol",price:18.90,desc:"Carne de sol desfiada em bolinha crocante.",img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&q=80"},
-    {id:56,name:"Macaxeira frita",price:19.90,desc:"Macaxeira frita crocante por fora e macia por dentro.",img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&q=80"},
-    {id:57,name:"Tulipas de frango crocantes",price:19.90,desc:"Coxa de frango crocante temperada com ervas especiais.",img:"https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400&q=80"},
-    {id:58,name:"Camarão ao alho e óleo",price:32.90,desc:"Camarões frescos salteados no alho e azeite.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"},
-    {id:59,name:"Camarões empanados",price:35.90,desc:"Camarões empanados crocantes com molho especial.",img:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=400&q=80"}
-  ]},
-  "Acompanhamentos":{icon:"🥗",items:[
-    {id:60,name:"Arroz branco",price:8.90,desc:"Arroz soltinho e perfumado.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"},
-    {id:61,name:"Arroz de leite",price:11.90,desc:"Arroz cremoso com leite e temperos especiais.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"},
-    {id:62,name:"Arroz biro biro",price:12.90,desc:"Arroz com ovos, bacon e farofa crocante.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"},
-    {id:63,name:"Arroz à grega",price:12.90,desc:"Arroz colorido com legumes e temperos.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"},
-    {id:64,name:"Baião de dois",price:12.90,desc:"Clássico nordestino de arroz com feijão verde e queijo.",img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&q=80"}
-  ]},
-  "Sucos":{icon:"🥤",items:[
-    {id:70,name:"Abacaxi",price:6.00,desc:"Suco natural de abacaxi fresquinho.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:71,name:"Acerola",price:6.00,desc:"Rico em vitamina C.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:72,name:"Manga",price:6.00,desc:"Manga selecionada, docinha e cremosa.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:73,name:"Cajá",price:6.00,desc:"O sabor autêntico do nordeste.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:74,name:"Goiaba",price:6.00,desc:"Goiaba madura e saborosa.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:75,name:"Limão",price:6.00,desc:"Refrescante e cítrico.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:76,name:"Tamarindo",price:6.00,desc:"Sabor único e marcante.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:77,name:"Graviola",price:6.00,desc:"Cremoso e tropical.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:78,name:"Abacaxi com morango",price:7.00,desc:"Combinação tropical refrescante.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:79,name:"Acerola com morango",price:7.00,desc:"Vitamina C em dobro.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:80,name:"Maracujá com manga",price:7.00,desc:"Tropical e irresistível.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:81,name:"Abacaxi com hortelã",price:7.00,desc:"Refrescante e digestivo.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"},
-    {id:82,name:"Detox",price:12.00,desc:"Mix especial de frutas e verduras para energia e bem-estar.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=400&q=80"}
-  ]},
-  "Bebidas":{icon:"🧃",items:[
-    {id:90,name:"Água mineral",price:2.50,desc:"500ml gelada.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
-    {id:91,name:"Água com gás",price:3.50,desc:"500ml gelada.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
-    {id:92,name:"Refrigerante lata",price:5.00,desc:"350ml gelado.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
-    {id:93,name:"Coca-Cola 1L",price:9.00,desc:"Garrafa 1 litro gelada.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
-    {id:94,name:"Coca-Cola 2L",price:13.00,desc:"Garrafa 2 litros gelada.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
-    {id:95,name:"São Geraldo 1L",price:9.00,desc:"Guaraná regional 1 litro.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
-    {id:96,name:"São Geraldo 2L",price:13.00,desc:"Guaraná regional 2 litros.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"},
-    {id:97,name:"Red Bull",price:12.90,desc:"Energy drink 250ml.",img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80"}
-  ]}
+
+"Especiais da Casa":{icon:"⭐",items:[
+  {id:1,  name:"Filé salteado na manteiga com fritas",           price:47.90, desc:"Filé mignon suculento, salteado na manteiga com ervas finas, acompanhado de fritas crocantes.",             img:"https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&q=85"},
+  {id:2,  name:"Tábua Sertaneja",                                price:49.90, desc:"Tábua farta com carne de sol, queijo coalho, macaxeira, charque e vinagrete.",                              img:"https://images.unsplash.com/photo-1544025162-d76594f0c7e1?w=500&q=85"},
+  {id:3,  name:"Maminha grelhada na manteiga com batatas sauté", price:49.90, desc:"Maminha grelhada no ponto perfeito, na manteiga temperada, com batatas sauté douradas.",                   img:"https://images.unsplash.com/photo-1558030006-450675393462?w=500&q=85"},
+  {id:4,  name:"Carne de sol e queijo coalho na redução de rapadura",price:69.90,desc:"Carne de sol premium com queijo coalho grelhado em irresistível redução de rapadura.",                 img:"https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=500&q=85"},
+  {id:5,  name:"Carne de sol aos 4 queijos",                     price:73.90, desc:"Carne de sol desfiada envolta em cremoso molho de quatro queijos selecionados.",                          img:"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=500&q=85"},
+  {id:6,  name:"Arroz de Camarão Cremoso",                       price:32.90, desc:"Arroz cremoso com camarões frescos, legumes e toque especial da casa.",                                   img:"https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500&q=85"},
+  {id:7,  name:"Massa Frutos do Mar",                            price:39.90, desc:"Massa artesanal com mix de frutos do mar em molho ao sugo com ervas frescas.",                           img:"https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=500&q=85"}
+]},
+
+"Risotos":{icon:"🍚",items:[
+  {id:10, name:"Frango com Bacon",                               price:23.90, desc:"Risoto cremoso de frango grelhado com bacon crocante e parmesão.",                                       img:"https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=500&q=85"},
+  {id:11, name:"Carne de sol com calabresa",                     price:24.90, desc:"Risoto nordestino com carne de sol desfiada e calabresa defumada.",                                     img:"https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=500&q=85"},
+  {id:12, name:"Filé",                                           price:29.90, desc:"Risoto sofisticado com medalhões de filé mignon e parmesão aged.",                                      img:"https://images.unsplash.com/photo-1551326844-4df70f78d0e9?w=500&q=85"}
+]},
+
+"Massas e Molhos":{icon:"🍝",items:[
+  {id:20, name:"Frango com queijo",                              price:24.90, desc:"Massa artesanal com frango grelhado e queijo derretido.",                                                img:"https://images.unsplash.com/photo-1612874742237-6526221588e3?w=500&q=85"},
+  {id:21, name:"Calabresa e bacon defumado",                     price:24.90, desc:"Massa com calabresa ao molho e bacon defumado artesanal.",                                              img:"https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=500&q=85"},
+  {id:22, name:"Carbonara",                                      price:25.90, desc:"Clássica italiana com ovos, parmesão, pancetta e pimenta negra.",                                      img:"https://images.unsplash.com/photo-1673442989195-b0c7e88a0e42?w=500&q=85"},
+  {id:23, name:"Bolonhesa",                                      price:26.90, desc:"Ragù de carne moída ao molho de tomate fresco com ervas.",                                             img:"https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=500&q=85"},
+  {id:24, name:"Nordestino",                                     price:27.90, desc:"Massa especial com carne de sol, queijo coalho e manteiga de garrafa.",                                img:"https://images.unsplash.com/photo-1548940740-204726a19be3?w=500&q=85"},
+  {id:25, name:"Filé",                                           price:32.90, desc:"Massa premium com tiras de filé mignon ao molho especial da casa.",                                    img:"https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=500&q=85"},
+  {id:26, name:"Camarão cremoso",                                price:32.90, desc:"Massa ao molho cremoso com camarões frescos e especiarias.",                                           img:"https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=500&q=85"},
+  {id:27, name:"Camarão com bacon",                              price:34.90, desc:"Camarões grelhados com bacon crocante ao molho da casa.",                                              img:"https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?w=500&q=85"}
+]},
+
+"Pastéis":{icon:"🥟",items:[
+  {id:30, name:"Queijo",                                         price:9.90,  desc:"Pastel crocante recheado com queijo fundido.",                                                         img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&q=85"},
+  {id:31, name:"Misto",                                          price:9.90,  desc:"Presunto e queijo no ponto certo.",                                                                    img:"https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500&q=85"},
+  {id:32, name:"Pizza",                                          price:10.90, desc:"Molho de tomate, queijo e pepperoni.",                                                                 img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=85"},
+  {id:33, name:"Frango",                                         price:9.90,  desc:"Frango desfiado temperado com ervas.",                                                                 img:"https://images.unsplash.com/photo-1598514983318-2f64f8f4796c?w=500&q=85"},
+  {id:34, name:"Frango com bacon",                               price:10.90, desc:"Frango suculento e bacon crocante.",                                                                   img:"https://images.unsplash.com/photo-1606755456206-b25206cde27e?w=500&q=85"},
+  {id:35, name:"Frango com queijo",                              price:10.90, desc:"Frango cremoso com queijo derretido.",                                                                 img:"https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=500&q=85"},
+  {id:36, name:"Carne com queijo",                               price:11.90, desc:"Carne moída temperada com queijo.",                                                                    img:"https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=500&q=85"},
+  {id:37, name:"Carne de sol com queijo",                        price:13.90, desc:"Carne de sol premium com queijo coalho.",                                                              img:"https://images.unsplash.com/photo-1544025162-d76594f0c7e1?w=500&q=85"},
+  {id:38, name:"Tudão",                                          price:14.90, desc:"Frango, carne, queijo e bacon — o pastel mais completo!",                                             img:"https://images.unsplash.com/photo-1585325701165-f7c6c7ac42da?w=500&q=85"},
+  {id:39, name:"Chocolate",                                      price:16.90, desc:"Recheio de chocolate cremoso — uma tentação irresistível!",                                           img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=85"}
+]},
+
+"Omeletes":{icon:"🍳",items:[
+  {id:40, name:"Frango com queijo",                              price:14.90, desc:"Omelete fofinho com frango e queijo derretido.",                                                       img:"https://images.unsplash.com/photo-1612182179905-b4e5e37f9c17?w=500&q=85"},
+  {id:41, name:"Frango com bacon",                               price:14.90, desc:"Frango suculento com bacon crocante.",                                                                 img:"https://images.unsplash.com/photo-1510693206972-df098062cb71?w=500&q=85"},
+  {id:42, name:"Calabresa com queijo",                           price:14.90, desc:"Calabresa temperada com queijo fundido.",                                                              img:"https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&q=85"},
+  {id:43, name:"Presunto e queijo",                              price:14.90, desc:"Clássico e irresistível.",                                                                             img:"https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=500&q=85"},
+  {id:44, name:"Legumes",                                        price:15.90, desc:"Omelete nutritivo com legumes frescos da estação.",                                                    img:"https://images.unsplash.com/photo-1546793665-c74683f339c1?w=500&q=85"}
+]},
+
+"Petiscos":{icon:"🍟",items:[
+  {id:50, name:"Batata frita",                                   price:17.90, desc:"Batatas crocantes douradas na medida certa.",                                                          img:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&q=85"},
+  {id:51, name:"Batata frita com parmesão",                      price:18.90, desc:"Batatas fritas com parmesão ralado e ervas finas.",                                                   img:"https://images.unsplash.com/photo-1576107232684-1279f58a56e5?w=500&q=85"},
+  {id:52, name:"Batata com cheddar e bacon",                     price:18.90, desc:"Batatas cobertas com cheddar cremoso e bacon crocante.",                                              img:"https://images.unsplash.com/photo-1585325701165-f7c6c7ac42da?w=500&q=85"},
+  {id:53, name:"Isca de peixe",                                  price:18.90, desc:"Iscas de peixe empanadas, crocantes e saborosas.",                                                    img:"https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=500&q=85"},
+  {id:54, name:"Bolinha de queijo",                              price:18.90, desc:"Bolinhas crocantes com queijo derretido por dentro.",                                                 img:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&q=85"},
+  {id:55, name:"Bolinha de carne do sol",                        price:18.90, desc:"Carne de sol desfiada empanada em crocante bolinha.",                                                 img:"https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=500&q=85"},
+  {id:56, name:"Macaxeira frita",                                price:19.90, desc:"Macaxeira frita crocante por fora, macia por dentro.",                                                img:"https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&q=85"},
+  {id:57, name:"Tulipas de frango crocantes",                    price:19.90, desc:"Coxinha de frango crocante temperada com ervas especiais.",                                           img:"https://images.unsplash.com/photo-1598514983318-2f64f8f4796c?w=500&q=85"},
+  {id:58, name:"Camarão ao alho e óleo",                         price:32.90, desc:"Camarões frescos salteados no alho e azeite aromatizado.",                                           img:"https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500&q=85"},
+  {id:59, name:"Camarões empanados",                             price:35.90, desc:"Camarões empanados crocantes servidos com molho especial.",                                           img:"https://images.unsplash.com/photo-1559737558-2f5a35f4523b?w=500&q=85"}
+]},
+
+"Acompanhamentos":{icon:"🥗",items:[
+  {id:60, name:"Arroz branco",                                   price:8.90,  desc:"Arroz soltinho e perfumado.",                                                                          img:"https://images.unsplash.com/photo-1516684732162-798a0062be99?w=500&q=85"},
+  {id:61, name:"Arroz de leite",                                 price:11.90, desc:"Arroz cremoso com leite e temperos especiais.",                                                        img:"https://images.unsplash.com/photo-1536304993881-ff86e09346ef?w=500&q=85"},
+  {id:62, name:"Arroz biro biro",                                price:12.90, desc:"Arroz com ovos mexidos, bacon e farofa crocante.",                                                    img:"https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=500&q=85"},
+  {id:63, name:"Arroz à grega",                                  price:12.90, desc:"Arroz colorido com legumes e temperos mediterrâneos.",                                                img:"https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500&q=85"},
+  {id:64, name:"Baião de dois",                                  price:12.90, desc:"Clássico nordestino: arroz com feijão verde, queijo e ervas.",                                        img:"https://images.unsplash.com/photo-1563379091339-03b246963d96?w=500&q=85"}
+]},
+
+"Sucos":{icon:"🥤",items:[
+  {id:70, name:"Abacaxi",                                        price:6.00,  desc:"Suco natural de abacaxi fresquinho.",                                                                  img:"https://images.unsplash.com/photo-1546173159-315724a31696?w=500&q=85"},
+  {id:71, name:"Acerola",                                        price:6.00,  desc:"Rico em vitamina C, refrescante.",                                                                     img:"https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?w=500&q=85"},
+  {id:72, name:"Manga",                                          price:6.00,  desc:"Manga selecionada, docinha e cremosa.",                                                                img:"https://images.unsplash.com/photo-1553279768-865429fa0078?w=500&q=85"},
+  {id:73, name:"Cajá",                                           price:6.00,  desc:"O sabor autêntico do nordeste em cada gole.",                                                         img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=500&q=85"},
+  {id:74, name:"Goiaba",                                         price:6.00,  desc:"Goiaba madura e saborosa.",                                                                           img:"https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=500&q=85"},
+  {id:75, name:"Limão",                                          price:6.00,  desc:"Refrescante e cítrico na medida certa.",                                                              img:"https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500&q=85"},
+  {id:76, name:"Tamarindo",                                      price:6.00,  desc:"Sabor único e marcante do nordeste.",                                                                 img:"https://images.unsplash.com/photo-1546173159-315724a31696?w=500&q=85"},
+  {id:77, name:"Graviola",                                       price:6.00,  desc:"Cremoso, tropical e refrescante.",                                                                    img:"https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?w=500&q=85"},
+  {id:78, name:"Abacaxi com morango",                            price:7.00,  desc:"Combinação tropical incrível.",                                                                       img:"https://images.unsplash.com/photo-1553279768-865429fa0078?w=500&q=85"},
+  {id:79, name:"Acerola com morango",                            price:7.00,  desc:"Vitamina C em dobro e sabor delicioso.",                                                              img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=500&q=85"},
+  {id:80, name:"Maracujá com manga",                             price:7.00,  desc:"Tropical e irresistível.",                                                                            img:"https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=500&q=85"},
+  {id:81, name:"Abacaxi com hortelã",                            price:7.00,  desc:"Refrescante, digestivo e cheio de sabor.",                                                            img:"https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500&q=85"},
+  {id:82, name:"Detox",                                          price:12.00, desc:"Mix especial de frutas e verduras para energia e bem-estar.",                                         img:"https://images.unsplash.com/photo-1546173159-315724a31696?w=500&q=85"}
+]},
+
+"Bebidas":{icon:"🧃",items:[
+  {id:90, name:"Água mineral",                                   price:2.50,  desc:"500ml gelada.",                                                                                       img:"https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=500&q=85"},
+  {id:91, name:"Água com gás",                                   price:3.50,  desc:"500ml gelada e borbulhante.",                                                                         img:"https://images.unsplash.com/photo-1523362628745-0c100150b504?w=500&q=85"},
+  {id:92, name:"Refrigerante lata",                              price:5.00,  desc:"350ml gelado — diversas opções.",                                                                     img:"https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=500&q=85"},
+  {id:93, name:"Coca-Cola 1L",                                   price:9.00,  desc:"Garrafa gelada 1 litro.",                                                                             img:"https://images.unsplash.com/photo-1554866585-cd94860890b7?w=500&q=85"},
+  {id:94, name:"Coca-Cola 2L",                                   price:13.00, desc:"Garrafa gelada 2 litros.",                                                                            img:"https://images.unsplash.com/photo-1554866585-cd94860890b7?w=500&q=85"},
+  {id:95, name:"São Geraldo 1L",                                 price:9.00,  desc:"Guaraná regional gelado 1 litro.",                                                                    img:"https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=500&q=85"},
+  {id:96, name:"São Geraldo 2L",                                 price:13.00, desc:"Guaraná regional gelado 2 litros.",                                                                   img:"https://images.unsplash.com/photo-1623065422902-30a2d299bbe4?w=500&q=85"},
+  {id:97, name:"Red Bull",                                       price:12.90, desc:"Energy drink 250ml gelado.",                                                                          img:"https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=500&q=85"}
+]}
+
 };
 
-/* ═══════════════════════════════════════════════
+/* =============================================
    STATE
-═══════════════════════════════════════════════ */
-var cart = [];
-var orderType = 'entrega';
-var payMethod = 'pix';
-var currentStep = 0;
+============================================= */
+var cart=[], orderType='entrega', payMethod='pix', currentStep=0;
 
-/* ═══════════════════════════════════════════════
+/* =============================================
    INIT
-═══════════════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', function(){
-  // hide loading
+============================================= */
+window.addEventListener('DOMContentLoaded',function(){
   setTimeout(function(){
-    var l = document.getElementById('loading');
+    var l=document.getElementById('loading');
     l.classList.add('hide');
-    setTimeout(function(){ l.style.display='none'; }, 700);
-    // hero reveal
-    setTimeout(function(){
-      document.getElementById('hero-content').classList.add('visible');
-    }, 200);
-  }, 1700);
-
+    setTimeout(function(){l.style.display='none';},700);
+    setTimeout(function(){document.getElementById('hero-content').classList.add('visible');},200);
+  },1700);
   buildHomeSpecials();
   buildMenuPage();
   initScrollAnimations();
-  initNavbarScroll();
-});
-
-/* ─── Navbar scroll ─── */
-function initNavbarScroll(){
-  window.addEventListener('scroll', function(){
-    var nav = document.getElementById('navbar');
-    if(window.scrollY > 60) nav.classList.add('scrolled');
+  window.addEventListener('scroll',function(){
+    var nav=document.getElementById('navbar');
+    if(window.scrollY>60) nav.classList.add('scrolled');
     else nav.classList.remove('scrolled');
   });
-}
+});
 
-/* ─── Scroll reveal ─── */
 function initScrollAnimations(){
-  var els = document.querySelectorAll('.reveal');
-  var obs = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){ e.target.classList.add('shown'); }
-    });
-  },{threshold:0.12});
-  els.forEach(function(el){ obs.observe(el); });
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('shown');});},{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});
 }
 function reObserve(){
-  var els = document.querySelectorAll('.reveal:not(.shown)');
-  var obs = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){ e.target.classList.add('shown'); }
-    });
-  },{threshold:0.12});
-  els.forEach(function(el){ obs.observe(el); });
+  var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('shown');});},{threshold:0.12});
+  document.querySelectorAll('.reveal:not(.shown)').forEach(function(el){obs.observe(el);});
 }
 
-/* ═══════════════════════════════════════════════
-   PAGE NAVIGATION
-═══════════════════════════════════════════════ */
+/* =============================================
+   NAVIGATION
+============================================= */
 function showPage(p){
-  document.querySelectorAll('.page').forEach(function(pg){ pg.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(pg){pg.classList.remove('active');});
   document.getElementById(p+'-page').classList.add('active');
-  // nav links
-  document.querySelectorAll('.nav-link').forEach(function(l){ l.classList.remove('active'); });
-  var nl = document.getElementById('nl-'+p);
-  if(nl) nl.classList.add('active');
-  window.scrollTo(0,0);
-  // success page
+  document.querySelectorAll('.nav-link').forEach(function(l){l.classList.remove('active');});
+  var nl=document.getElementById('nl-'+p);if(nl)nl.classList.add('active');
   document.getElementById('success-page').classList.remove('show');
-  setTimeout(reObserve, 100);
+  window.scrollTo(0,0);setTimeout(reObserve,100);
 }
+function toggleMobileMenu(){document.getElementById('mobile-menu').classList.toggle('open');}
 
-/* ─── Mobile menu ─── */
-function toggleMobileMenu(){
-  document.getElementById('mobile-menu').classList.toggle('open');
-}
-
-/* ═══════════════════════════════════════════════
+/* =============================================
    BUILD HOME SPECIALS
-═══════════════════════════════════════════════ */
+============================================= */
 function buildHomeSpecials(){
-  var grid = document.getElementById('home-specials-grid');
-  var items = MENU["Especiais da Casa"].items.slice(0,4);
-  items.forEach(function(item){
-    grid.appendChild(makeCard(item));
-  });
+  var grid=document.getElementById('home-specials-grid');
+  MENU["Especiais da Casa"].items.slice(0,4).forEach(function(item){grid.appendChild(makeCard(item,"Especiais da Casa"));});
 }
 
-/* ═══════════════════════════════════════════════
+/* =============================================
    BUILD MENU PAGE
-═══════════════════════════════════════════════ */
+============================================= */
 function buildMenuPage(){
-  var sidebar = document.getElementById('cat-sidebar');
-  var col = document.getElementById('menu-items-col');
-  sidebar.innerHTML='';
-  col.innerHTML='';
-
-  Object.keys(MENU).forEach(function(cat, idx){
-    // sidebar btn
-    var btn = document.createElement('button');
-    btn.className = 'cat-btn' + (idx===0?' active':'');
-    btn.id = 'sb-'+slugify(cat);
-    btn.innerHTML = '<span class="cat-icon">'+MENU[cat].icon+'</span><span>'+cat+'</span>';
-    btn.onclick = function(){
-      document.querySelectorAll('.cat-btn').forEach(function(b){ b.classList.remove('active'); });
-      btn.classList.add('active');
-      var sec = document.getElementById('sec-'+slugify(cat));
-      if(sec) sec.scrollIntoView({behavior:'smooth',block:'start'});
-    };
+  var sidebar=document.getElementById('cat-sidebar'),col=document.getElementById('menu-items-col');
+  sidebar.innerHTML='';col.innerHTML='';
+  Object.keys(MENU).forEach(function(cat,idx){
+    var btn=document.createElement('button');
+    btn.className='cat-btn'+(idx===0?' active':'');
+    btn.innerHTML='<span class="cat-icon">'+MENU[cat].icon+'</span><span>'+cat+'</span>';
+    btn.onclick=(function(c,b){return function(){
+      document.querySelectorAll('.cat-btn').forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      var sec=document.getElementById('sec-'+slugify(c));
+      if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});
+    };})(cat,btn);
     sidebar.appendChild(btn);
 
-    // section
-    var sec = document.createElement('div');
-    sec.className = 'cat-section';
-    sec.id = 'sec-'+slugify(cat);
-    sec.innerHTML = '<div class="cat-header"><span class="cat-header-icon">'+MENU[cat].icon+'</span><h2>'+cat+'</h2><div class="cat-rule"></div></div>';
-    var grid = document.createElement('div');
-    grid.className = 'grid-4';
-    grid.id = 'grid-'+slugify(cat);
-    MENU[cat].items.forEach(function(item){
-      grid.appendChild(makeCard(item));
-    });
-    sec.appendChild(grid);
-    col.appendChild(sec);
+    var sec=document.createElement('div');
+    sec.className='cat-section';sec.id='sec-'+slugify(cat);
+    var hdr=document.createElement('div');hdr.className='cat-header';
+    hdr.innerHTML='<span class="cat-header-icon">'+MENU[cat].icon+'</span><h2>'+cat+'</h2><div class="cat-rule"></div>';
+    sec.appendChild(hdr);
+    var grid=document.createElement('div');grid.className='grid-4';
+    MENU[cat].items.forEach(function(item){grid.appendChild(makeCard(item,cat));});
+    sec.appendChild(grid);col.appendChild(sec);
   });
 }
 
-/* ─── Make card ─── */
-function makeCard(item){
-  var div = document.createElement('div');
-  div.className = 'menu-card';
-  div.innerHTML =
+/* =============================================
+   MAKE CARD
+============================================= */
+function makeCard(item,cat){
+  var div=document.createElement('div');div.className='menu-card';
+  var fallback='https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80';
+  div.innerHTML=
     '<div class="card-img-wrap">'+
-      '<img src="'+item.img+'" alt="'+item.name+'" loading="lazy">'+
+      '<img src="'+item.img+'" alt="'+item.name+'" loading="lazy" onerror="this.src=\''+fallback+'\'">'+
       '<div class="card-img-fade"></div>'+
+      (cat?'<div class="card-cat-tag">'+MENU[cat].icon+' '+cat+'</div>':'')+
       '<div class="card-price">R$'+fmtPrice(item.price)+'</div>'+
     '</div>'+
     '<div class="card-body">'+
@@ -1221,258 +728,129 @@ function makeCard(item){
   return div;
 }
 
-/* ─── Search ─── */
+/* =============================================
+   SEARCH
+============================================= */
 function filterMenu(q){
-  q = q.toLowerCase().trim();
-  var col = document.getElementById('menu-items-col');
-  if(!q){
-    buildMenuPage();
-    return;
-  }
+  q=q.toLowerCase().trim();
+  var col=document.getElementById('menu-items-col');
+  if(!q){buildMenuPage();return;}
   col.innerHTML='';
-  var sec = document.createElement('div');
-  sec.className='cat-section';
-  var matches = [];
-  Object.values(MENU).forEach(function(cat){
-    cat.items.forEach(function(item){
-      if(item.name.toLowerCase().includes(q)||item.desc.toLowerCase().includes(q)){
-        matches.push(item);
-      }
+  var matches=[];
+  Object.entries(MENU).forEach(function(e){
+    e[1].items.forEach(function(item){
+      if(item.name.toLowerCase().includes(q)||item.desc.toLowerCase().includes(q))matches.push({item:item,cat:e[0]});
     });
   });
-  var h = document.createElement('div');
-  h.className='cat-header';
-  h.innerHTML='<span class="cat-header-icon">🔍</span><h2>'+matches.length+' resultado(s)</h2><div class="cat-rule"></div>';
-  sec.appendChild(h);
-  var grid = document.createElement('div');
-  grid.className='grid-4';
-  if(matches.length===0){
-    grid.innerHTML='<p style="color:var(--dim);padding:20px">Nenhum item encontrado.</p>';
-  } else {
-    matches.forEach(function(item){ grid.appendChild(makeCard(item)); });
-  }
-  sec.appendChild(grid);
-  col.appendChild(sec);
+  var sec=document.createElement('div');sec.className='cat-section';
+  var hdr=document.createElement('div');hdr.className='cat-header';
+  hdr.innerHTML='<span class="cat-header-icon">🔍</span><h2>'+matches.length+' resultado(s)</h2><div class="cat-rule"></div>';
+  sec.appendChild(hdr);
+  var grid=document.createElement('div');grid.className='grid-4';
+  if(!matches.length){grid.innerHTML='<p style="color:var(--dim);padding:20px 0">Nenhum item encontrado.</p>';}
+  else{matches.forEach(function(m){grid.appendChild(makeCard(m.item,m.cat));});}
+  sec.appendChild(grid);col.appendChild(sec);
 }
 
-/* ═══════════════════════════════════════════════
+/* =============================================
    CART
-═══════════════════════════════════════════════ */
-function findItem(id){
-  var found=null;
-  Object.values(MENU).forEach(function(cat){
-    cat.items.forEach(function(item){
-      if(item.id===id) found=item;
-    });
-  });
-  return found;
-}
+============================================= */
+function findItem(id){var f=null;Object.values(MENU).forEach(function(c){c.items.forEach(function(i){if(i.id===id)f=i;});});return f;}
 
 function addToCart(id){
-  var item = findItem(id);
-  if(!item) return;
-  var obsEl = document.getElementById('obs-'+id);
-  var obs = obsEl ? obsEl.value : '';
-  var ex = cart.find(function(c){ return c.id===id; });
-  if(ex){ ex.qty++; }
-  else { cart.push({id:item.id,name:item.name,price:item.price,img:item.img,qty:1,obs:obs}); }
-  // flash btn
-  var btn = document.getElementById('add-'+id);
-  if(btn){
-    btn.textContent='✓ Adicionado!';
-    btn.classList.add('added');
-    setTimeout(function(){ btn.textContent='🛒 Adicionar'; btn.classList.remove('added'); },1400);
-  }
+  var item=findItem(id);if(!item)return;
+  var obsEl=document.getElementById('obs-'+id);
+  var obs=obsEl?obsEl.value:'';
+  var ex=cart.find(function(c){return c.id===id;});
+  if(ex){ex.qty++;}else{cart.push({id:item.id,name:item.name,price:item.price,img:item.img,qty:1,obs:obs});}
+  var btn=document.getElementById('add-'+id);
+  if(btn){btn.textContent='✓ Adicionado!';btn.classList.add('added');setTimeout(function(){btn.textContent='🛒 Adicionar';btn.classList.remove('added');},1400);}
   updateCartUI();
 }
-
-function removeFromCart(id){
-  cart = cart.filter(function(c){ return c.id!==id; });
-  updateCartUI();
-  renderCartItems();
+function removeFromCart(id){cart=cart.filter(function(c){return c.id!==id;});updateCartUI();renderCartItems();}
+function changeQty(id,delta){
+  var item=cart.find(function(c){return c.id===id;});if(!item)return;
+  item.qty+=delta;if(item.qty<1){removeFromCart(id);return;}
+  updateCartUI();renderCartItems();
 }
-
-function changeQty(id, delta){
-  var item = cart.find(function(c){ return c.id===id; });
-  if(!item) return;
-  item.qty += delta;
-  if(item.qty < 1){ removeFromCart(id); return; }
-  updateCartUI();
-  renderCartItems();
-}
-
-function cartTotal(){
-  return cart.reduce(function(s,c){ return s+c.price*c.qty; },0);
-}
-function cartCount(){
-  return cart.reduce(function(s,c){ return s+c.qty; },0);
-}
+function cartTotal(){return cart.reduce(function(s,c){return s+c.price*c.qty;},0);}
+function cartCount(){return cart.reduce(function(s,c){return s+c.qty;},0);}
 
 function updateCartUI(){
-  var cnt = cartCount();
-  var total = cartTotal();
-  // navbar badge
-  var badge = document.getElementById('nav-cart-count');
-  badge.textContent = cnt;
-  badge.style.display = cnt>0 ? 'flex' : 'none';
-  // float btn
-  var fc = document.getElementById('float-cart');
-  if(cnt>0){
-    fc.classList.add('show');
-    document.getElementById('float-cart-label').textContent =
-      'Ver Carrinho ('+cnt+') · R$'+fmtPrice(total);
-  } else {
-    fc.classList.remove('show');
-  }
+  var cnt=cartCount(),total=cartTotal();
+  var badge=document.getElementById('nav-cart-count');
+  badge.textContent=cnt;badge.style.display=cnt>0?'flex':'none';
+  var fc=document.getElementById('float-cart');
+  if(cnt>0){fc.classList.add('show');document.getElementById('float-cart-label').textContent='Ver Carrinho ('+cnt+') · R$'+fmtPrice(total);}
+  else{fc.classList.remove('show');}
 }
 
 function renderCartItems(){
-  var list = document.getElementById('cart-items-list');
-  var actions = document.getElementById('cart-actions');
-  if(cart.length===0){
-    list.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Seu carrinho está vazio</p></div>';
-    actions.style.display='none';
-    return;
-  }
-  actions.style.display='block';
-  list.innerHTML='';
+  var list=document.getElementById('cart-items-list'),actions=document.getElementById('cart-actions');
+  var fb='https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200&q=60';
+  if(!cart.length){list.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Seu carrinho está vazio</p></div>';actions.style.display='none';return;}
+  actions.style.display='block';list.innerHTML='';
   cart.forEach(function(c){
-    var div=document.createElement('div');
-    div.className='cart-item';
-    div.innerHTML=
-      '<img class="cart-item-img" src="'+c.img+'" alt="'+c.name+'">'+
-      '<div class="cart-item-info">'+
-        '<div class="cart-item-name">'+c.name+'</div>'+
-        '<div class="cart-item-price">R$'+fmtPrice(c.price)+'</div>'+
-        (c.obs?'<div class="cart-item-obs">📝 '+c.obs+'</div>':'')+
-      '</div>'+
-      '<div class="cart-item-ctrl">'+
-        '<div class="qty-row">'+
-          '<button class="qty-btn" onclick="changeQty('+c.id+',-1)">−</button>'+
-          '<span class="qty-val">'+c.qty+'</span>'+
-          '<button class="qty-btn" onclick="changeQty('+c.id+',1)">+</button>'+
-        '</div>'+
-        '<button class="del-btn" onclick="removeFromCart('+c.id+')">🗑</button>'+
-      '</div>';
+    var div=document.createElement('div');div.className='cart-item';
+    div.innerHTML='<img class="cart-item-img" src="'+c.img+'" alt="'+c.name+'" onerror="this.src=\''+fb+'\'">'+
+      '<div class="cart-item-info"><div class="cart-item-name">'+c.name+'</div><div class="cart-item-price">R$'+fmtPrice(c.price)+'</div>'+(c.obs?'<div class="cart-item-obs">📝 '+c.obs+'</div>':'')+
+      '</div><div class="cart-item-ctrl"><div class="qty-row"><button class="qty-btn" onclick="changeQty('+c.id+',-1)">−</button><span class="qty-val">'+c.qty+'</span><button class="qty-btn" onclick="changeQty('+c.id+',1)">+</button></div><button class="del-btn" onclick="removeFromCart('+c.id+')">🗑</button></div>';
     list.appendChild(div);
   });
   document.getElementById('cart-total-val').textContent='R$'+fmtPrice(cartTotal());
 }
 
-/* ─── Cart open/close ─── */
-function openCart(){
-  renderCartItems();
-  goStep(0);
-  document.getElementById('cart-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeCart(){
-  document.getElementById('cart-overlay').classList.remove('open');
-  document.body.style.overflow='';
-}
+function openCart(){renderCartItems();goStep(0);document.getElementById('cart-overlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeCart(){document.getElementById('cart-overlay').classList.remove('open');document.body.style.overflow='';}
 
-/* ─── Steps ─── */
 function goStep(n){
-  if(n===1){
-    if(cart.length===0){ alert('Adicione itens ao carrinho primeiro!'); return; }
-  }
+  if(n===1&&!cart.length){alert('Adicione itens ao carrinho primeiro!');return;}
   if(n===2){
-    var name=document.getElementById('f-name').value.trim();
-    var phone=document.getElementById('f-phone').value.trim();
-    var addr=document.getElementById('f-address').value.trim();
-    if(!name||!phone){ alert('Preencha nome e telefone.'); return; }
-    if(orderType==='entrega'&&!addr){ alert('Informe o endereço de entrega.'); return; }
+    var nm=document.getElementById('f-name').value.trim(),ph=document.getElementById('f-phone').value.trim(),ad=document.getElementById('f-address').value.trim();
+    if(!nm||!ph){alert('Preencha nome e telefone.');return;}
+    if(orderType==='entrega'&&!ad){alert('Informe o endereço de entrega.');return;}
   }
   currentStep=n;
-  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
-  var stepIds=['step-cart','step-delivery','step-payment'];
-  document.getElementById(stepIds[n]).classList.add('active');
-  if(n===2) buildOrderSummary();
+  document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
+  ['step-cart','step-delivery','step-payment'].forEach(function(id,i){if(i===n)document.getElementById(id).classList.add('active');});
+  if(n===2)buildOrderSummary();
 }
-
-/* ─── Delivery type ─── */
 function selectType(t){
   orderType=t;
-  document.getElementById('t-entrega').classList.toggle('sel', t==='entrega');
-  document.getElementById('t-retirada').classList.toggle('sel', t==='retirada');
-  document.getElementById('addr-wrap').style.display = t==='entrega'?'block':'none';
+  document.getElementById('t-entrega').classList.toggle('sel',t==='entrega');
+  document.getElementById('t-retirada').classList.toggle('sel',t==='retirada');
+  document.getElementById('addr-wrap').style.display=t==='entrega'?'block':'none';
 }
-
-/* ─── Payment ─── */
 function selectPay(p){
   payMethod=p;
-  ['pix','cartao','dinheiro'].forEach(function(x){
-    document.getElementById('p-'+x).classList.toggle('sel', x===p);
-  });
-  document.getElementById('troco-wrap').style.display = p==='dinheiro'?'block':'none';
+  ['pix','cartao','dinheiro'].forEach(function(x){document.getElementById('p-'+x).classList.toggle('sel',x===p);});
+  document.getElementById('troco-wrap').style.display=p==='dinheiro'?'block':'none';
 }
-
-/* ─── Order summary ─── */
 function buildOrderSummary(){
-  var s = document.getElementById('order-summary');
-  var lines = cart.map(function(c){
-    return '<div class="summary-line"><span>'+c.qty+'× '+c.name+'</span><span>R$'+fmtPrice(c.price*c.qty)+'</span></div>';
-  }).join('');
-  s.innerHTML='<div class="summary-title">Resumo do pedido</div>'+lines+
-    '<div class="summary-total"><span>Total:</span><span>R$'+fmtPrice(cartTotal())+'</span></div>';
+  var s=document.getElementById('order-summary');
+  var lines=cart.map(function(c){return'<div class="summary-line"><span>'+c.qty+'× '+c.name+'</span><span>R$'+fmtPrice(c.price*c.qty)+'</span></div>';}).join('');
+  s.innerHTML='<div class="summary-title">Resumo do pedido</div>'+lines+'<div class="summary-total"><span>Total:</span><span>R$'+fmtPrice(cartTotal())+'</span></div>';
 }
-
-/* ─── Send order ─── */
 function sendOrder(){
-  var name=document.getElementById('f-name').value.trim();
-  var phone=document.getElementById('f-phone').value.trim();
-  var addr=document.getElementById('f-address').value.trim();
-  var troco=document.getElementById('f-troco').value.trim();
-
-  var msg='🍽️ *NOVO PEDIDO – DONANA GOURMET*\n\n';
-  msg+='👤 *Cliente:* '+name+'\n';
-  msg+='📞 *Telefone:* '+phone+'\n';
-  msg+='📍 *Tipo:* '+(orderType==='entrega'?'Entrega':'Retirar na Loja')+'\n';
-  if(orderType==='entrega') msg+='🏠 *Endereço:* '+addr+'\n';
+  var name=document.getElementById('f-name').value.trim(),phone=document.getElementById('f-phone').value.trim(),addr=document.getElementById('f-address').value.trim(),troco=document.getElementById('f-troco').value.trim();
+  var msg='🍽️ *NOVO PEDIDO – DONANA GOURMET*\n\n👤 *Cliente:* '+name+'\n📞 *Telefone:* '+phone+'\n📍 *Tipo:* '+(orderType==='entrega'?'Entrega':'Retirar na Loja')+'\n';
+  if(orderType==='entrega')msg+='🏠 *Endereço:* '+addr+'\n';
   msg+='\n🛒 *ITENS DO PEDIDO:*\n';
-  cart.forEach(function(c){
-    msg+='• '+c.qty+'× '+c.name+' — R$'+fmtPrice(c.price*c.qty);
-    if(c.obs) msg+=' (Obs: '+c.obs+')';
-    msg+='\n';
-  });
-  msg+='\n💰 *TOTAL: R$'+fmtPrice(cartTotal())+'*\n';
-  var payLabel = payMethod==='pix'?'Pix':payMethod==='cartao'?'Cartão':'Dinheiro'+(troco?' (troco p/ R$'+troco+')':'');
-  msg+='💳 *Pagamento:* '+payLabel;
-
+  cart.forEach(function(c){msg+='• '+c.qty+'× '+c.name+' — R$'+fmtPrice(c.price*c.qty)+(c.obs?' (Obs: '+c.obs+')':'')+'\n';});
+  msg+='\n💰 *TOTAL: R$'+fmtPrice(cartTotal())+'*\n💳 *Pagamento:* '+(payMethod==='pix'?'Pix':payMethod==='cartao'?'Cartão':'Dinheiro'+(troco?' (troco p/ R$'+troco+')':''));
   window.open('https://wa.me/5585985302803?text='+encodeURIComponent(msg),'_blank');
-  closeCart();
-  showSuccessPage();
+  closeCart();showSuccessPage();
 }
-
-function showSuccessPage(){
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById('success-page').classList.add('show');
-  window.scrollTo(0,0);
-}
-
+function showSuccessPage(){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});document.getElementById('success-page').classList.add('show');window.scrollTo(0,0);}
 function resetOrder(){
-  cart=[];
-  orderType='entrega';
-  payMethod='pix';
-  currentStep=0;
-  updateCartUI();
-  document.getElementById('f-name').value='';
-  document.getElementById('f-phone').value='';
-  document.getElementById('f-address').value='';
-  document.getElementById('f-troco').value='';
-  document.getElementById('success-page').classList.remove('show');
-  showPage('home');
+  cart=[];orderType='entrega';payMethod='pix';currentStep=0;updateCartUI();
+  ['f-name','f-phone','f-address','f-troco'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('success-page').classList.remove('show');showPage('home');
 }
 
-/* ═══════════════════════════════════════════════
-   UTILS
-═══════════════════════════════════════════════ */
-function fmtPrice(n){
-  return n.toFixed(2).replace('.',',');
-}
-function slugify(s){
-  return s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
-}
+/* UTILS */
+function fmtPrice(n){return n.toFixed(2).replace('.',',');}
+function slugify(s){return s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');}
 </script>
 </body>
 </html>
